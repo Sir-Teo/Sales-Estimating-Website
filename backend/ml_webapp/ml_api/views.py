@@ -10,23 +10,14 @@ from .ml_model import predict
 logger = logging.getLogger(__name__)
 
 class PredictionView(APIView):
-    """
-    API view for making predictions.
-    """
     def post(self, request, format=None):
-        """
-        Handle POST requests for predictions.
-        """
         logger.info(f"Received prediction request: {request.data}")
         
-        # Deserialize and validate input data
         input_serializer = InputSerializer(data=request.data)
         if input_serializer.is_valid():
             try:
-                # Make prediction
                 prediction = predict(input_serializer.validated_data)
                 
-                # Serialize output data
                 output_serializer = OutputSerializer(data=prediction)
                 if output_serializer.is_valid():
                     logger.info(f"Prediction successful: {output_serializer.data}")

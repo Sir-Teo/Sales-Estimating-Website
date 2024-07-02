@@ -3,9 +3,6 @@
 from rest_framework import serializers
 
 class InputSerializer(serializers.Serializer):
-    """
-    Serializer for input data.
-    """
     Master_Controllers = serializers.IntegerField(min_value=0)
     Field_Controllers = serializers.IntegerField(min_value=0)
     VAV_Controllers = serializers.IntegerField(min_value=0)
@@ -15,9 +12,6 @@ class InputSerializer(serializers.Serializer):
     Computers = serializers.FloatField(min_value=0)
 
 class OutputSerializer(serializers.Serializer):
-    """
-    Serializer for output data.
-    """
     HO02 = serializers.FloatField()
     HO03 = serializers.FloatField()
     HO04 = serializers.FloatField()
