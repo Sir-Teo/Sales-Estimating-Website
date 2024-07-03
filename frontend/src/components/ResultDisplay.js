@@ -1,4 +1,3 @@
-// src/components/ResultDisplay.js
 import React from 'react';
 import { Typography, Paper, Grid } from '@mui/material';
 
@@ -6,7 +5,7 @@ const ResultDisplay = ({ results }) => {
   if (!results) return null;
 
   return (
-    <Paper style={{ padding: '20px', marginTop: '20px' }}>
+    <Paper sx={{ padding: 3, mt: 3 }}>
       <Typography variant="h6" gutterBottom>
         Prediction Results
       </Typography>

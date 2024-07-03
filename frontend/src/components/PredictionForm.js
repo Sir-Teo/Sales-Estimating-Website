@@ -1,4 +1,3 @@
-// src/components/PredictionForm.js
 import React, { useState } from 'react';
 import { TextField, Button, Grid, Typography, Paper, IconButton, MenuItem, Select, FormControl, InputLabel, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -47,12 +46,12 @@ const PredictionForm = ({ onSubmit }) => {
   };
 
   return (
-    <Paper style={{ padding: '20px', marginTop: '20px' }}>
+    <Paper sx={{ padding: 3, mt: 3 }}>
       <Typography variant="h6">Enter Prediction Data</Typography>
       {formData.map((item, index) => (
         <Box key={index} mb={3}>
           <Grid container spacing={3} alignItems="center">
-            <Grid item xs={5}>
+            <Grid item xs={12} sm={5}>
               <TextField
                 fullWidth
                 label={item.name.replace('_', ' ')}
@@ -63,7 +62,7 @@ const PredictionForm = ({ onSubmit }) => {
                 required
               />
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={12} sm={2}>
               <IconButton onClick={() => handleRemoveItem(index)}>
                 <DeleteIcon />
               </IconButton>
@@ -71,8 +70,8 @@ const PredictionForm = ({ onSubmit }) => {
           </Grid>
         </Box>
       ))}
-      <Grid container spacing={3} style={{ marginTop: '10px' }}>
-        <Grid item xs={10}>
+      <Grid container spacing={3} sx={{ mt: 1 }}>
+        <Grid item xs={12} sm={10}>
           <FormControl fullWidth>
             <InputLabel id="select-item-label">Select Item</InputLabel>
             <Select
@@ -89,13 +88,13 @@ const PredictionForm = ({ onSubmit }) => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={12} sm={2}>
           <Button variant="contained" color="primary" onClick={handleAddItem} startIcon={<AddIcon />}>
             Add Item
           </Button>
         </Grid>
       </Grid>
-      <Grid container spacing={3} style={{ marginTop: '20px' }}>
+      <Grid container spacing={3} sx={{ mt: 2 }}>
         <Grid item xs={12}>
           <Button type="submit" variant="contained" color="primary" onClick={handleSubmit}>
             Make Prediction

@@ -1,6 +1,5 @@
-// src/App.js
 import React, { useState } from 'react';
-import { Container, Typography, Box, AppBar, Toolbar, Avatar, Menu, MenuItem, IconButton } from '@mui/material';
+import { Container, Typography, Box, AppBar, Toolbar, IconButton, Menu, MenuItem } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import PredictionForm from './components/PredictionForm';
 import ResultDisplay from './components/ResultDisplay';
