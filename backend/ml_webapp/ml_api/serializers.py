@@ -10,7 +10,7 @@ class InputSerializer(serializers.Serializer):
     Panels = serializers.IntegerField(min_value=0)
     Software = serializers.IntegerField(min_value=0)
     Computers = serializers.FloatField(min_value=0)
-
+ 
 class OutputSerializer(serializers.Serializer):
     HO02 = serializers.FloatField()
     HO03 = serializers.FloatField()

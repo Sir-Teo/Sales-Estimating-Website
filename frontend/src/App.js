@@ -4,7 +4,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import PredictionForm from './components/PredictionForm';
 import ResultDisplay from './components/ResultDisplay';
 import { makePrediction } from './api';
-import logo from './assets/logo.png'; // Adjust the path according to your directory structure
+import logo from './assets/logo.png';
 
 function App() {
   const [results, setResults] = useState(null);
@@ -41,11 +41,7 @@ function App() {
           <IconButton edge="end" color="inherit" aria-label="menu" onClick={handleMenuClick}>
             <MenuIcon />
           </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-          >
+          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
             <MenuItem onClick={handleMenuClose}>About</MenuItem>
             <MenuItem onClick={handleMenuClose}>Help</MenuItem>
           </Menu>
