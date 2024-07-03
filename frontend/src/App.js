@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Container, Typography, Box } from '@mui/material';
 import PredictionForm from './components/PredictionForm';
 import ResultDisplay from './components/ResultDisplay';
-import { makePrediction } from './services/api';
+import { makePrediction } from './api';
 
 function App() {
   const [results, setResults] = useState(null);

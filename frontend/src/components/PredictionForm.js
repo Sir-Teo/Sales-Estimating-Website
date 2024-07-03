@@ -1,6 +1,6 @@
 // src/components/PredictionForm.js
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Typography } from '@material-ui/core';
+import { TextField, Button, Grid, Typography } from '@mui/material';
 
 const initialFormData = {
   Master_Controllers: '',
