@@ -1,6 +1,7 @@
 // components/PredictionForm.js
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Typography, Paper, IconButton, MenuItem, Select, FormControl, InputLabel, Box } from '@mui/material';
+import { TextField, Button, Grid, Typography, Paper, IconButton, MenuItem, FormControl, Box } from '@mui/material';
+import { Autocomplete } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -18,7 +19,7 @@ const allCodes = Object.values(groupsManual).flat();
 
 const PredictionForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState([]);
-  const [selectedItem, setSelectedItem] = useState('');
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const handleChange = (index, e) => {
     const newItems = formData.map((item, i) => (
@@ -30,7 +31,7 @@ const PredictionForm = ({ onSubmit }) => {
   const handleAddItem = () => {
     if (selectedItem) {
       setFormData([...formData, { name: selectedItem, quantity: '' }]);
-      setSelectedItem('');
+      setSelectedItem(null);
     }
   };
 
@@ -76,19 +77,16 @@ const PredictionForm = ({ onSubmit }) => {
       <Grid container spacing={3} sx={{ mt: 1 }}>
         <Grid item xs={12} sm={10}>
           <FormControl fullWidth>
-            <InputLabel id="select-item-label">Select Item</InputLabel>
-            <Select
-              labelId="select-item-label"
+            <Autocomplete
+              options={Object.entries(groupsManual).flatMap(([group, codes]) => 
+                codes.map(code => ({ group, code })))
+              }
+              groupBy={(option) => option.group}
+              getOptionLabel={(option) => option.code}
               value={selectedItem}
-              onChange={(e) => setSelectedItem(e.target.value)}
-              fullWidth
-            >
-              {allCodes.map((code) => (
-                <MenuItem key={code} value={code}>
-                  {code}
-                </MenuItem>
-              ))}
-            </Select>
+              onChange={(event, newValue) => setSelectedItem(newValue ? newValue.code : null)}
+              renderInput={(params) => <TextField {...params} label="Select Item" />}
+            />
           </FormControl>
         </Grid>
         <Grid item xs={12} sm={2}>

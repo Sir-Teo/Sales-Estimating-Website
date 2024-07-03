@@ -38,7 +38,7 @@ function App() {
         <Toolbar>
           <Box component="img" src={logo} alt="Company Logo" sx={{ height: 64, marginRight: 2 }} />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            ML Prediction Web App
+            TMBA Sales Estimation Prediction Web App
           </Typography>
           <IconButton edge="end" color="inherit" aria-label="menu" onClick={handleMenuClick}>
             <MenuIcon />
