@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Typography, Paper, IconButton, FormControl, Box, Chip } from '@mui/material';
+import { TextField, Button, Grid, Typography, Paper, FormControl, Box, Chip } from '@mui/material';
 import { Autocomplete } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
 
 const groupsManual = {
   'Master_Controllers': ['CO01', 'CO06', 'AN09', 'SX01', 'TD01', 'DC01', 'DC02', 'DC09'],
@@ -27,7 +26,7 @@ const PredictionForm = ({ onSubmit }) => {
 
   const handleAddItem = () => {
     if (selectedItem) {
-      setFormData([...formData, { name: selectedItem, quantity: '' }]);
+      setFormData([...formData, { name: selectedItem.code, quantity: '' }]);
       setSelectedItem(null);
     }
   };
@@ -59,7 +58,7 @@ const PredictionForm = ({ onSubmit }) => {
               groupBy={(option) => option.group}
               getOptionLabel={(option) => option.code}
               value={selectedItem}
-              onChange={(event, newValue) => setSelectedItem(newValue ? newValue.code : null)}
+              onChange={(event, newValue) => setSelectedItem(newValue)}
               renderInput={(params) => <TextField {...params} label="Select Item" />}
             />
           </FormControl>
