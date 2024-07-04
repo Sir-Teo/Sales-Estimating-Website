@@ -1,9 +1,12 @@
+//src/components/ResultDisplay.js
+
 import React from 'react';
 import { Typography, Paper, Grid, Box, Divider, LinearProgress, Card, CardContent, CardHeader, Avatar } from '@mui/material';
 import { green, red, blue } from '@mui/material/colors';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+
 
 const ResultDisplay = ({ results }) => {
   if (!results) return null;
