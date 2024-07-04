@@ -1,6 +1,5 @@
-// components/PredictionForm.js
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Typography, Paper, IconButton, MenuItem, FormControl, Box } from '@mui/material';
+import { TextField, Button, Grid, Typography, Paper, IconButton, FormControl, Box, Chip } from '@mui/material';
 import { Autocomplete } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -14,8 +13,6 @@ const groupsManual = {
   'Software': ['CO07', 'CP02', 'DC08', 'CP06', 'SX02', 'TD02'],
   'Computers': ['CP01', 'CP05'],
 };
-
-const allCodes = Object.values(groupsManual).flat();
 
 const PredictionForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState([]);
@@ -51,31 +48,9 @@ const PredictionForm = ({ onSubmit }) => {
 
   return (
     <Paper sx={{ padding: 3, mt: 3 }}>
-      <Typography variant="h6">Enter Prediction Data</Typography>
-      {formData.map((item, index) => (
-        <Box key={index} mb={3}>
-          <Grid container spacing={3} alignItems="center">
-            <Grid item xs={12} sm={5}>
-              <TextField
-                fullWidth
-                label={item.name}
-                name="quantity"
-                type="number"
-                value={item.quantity}
-                onChange={(e) => handleChange(index, e)}
-                required
-              />
-            </Grid>
-            <Grid item xs={12} sm={2}>
-              <IconButton onClick={() => handleRemoveItem(index)}>
-                <DeleteIcon />
-              </IconButton>
-            </Grid>
-          </Grid>
-        </Box>
-      ))}
-      <Grid container spacing={3} sx={{ mt: 1 }}>
-        <Grid item xs={12} sm={10}>
+      <Typography variant="h6" gutterBottom>Enter Prediction Data</Typography>
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={8}>
           <FormControl fullWidth>
             <Autocomplete
               options={Object.entries(groupsManual).flatMap(([group, codes]) => 
@@ -89,19 +64,61 @@ const PredictionForm = ({ onSubmit }) => {
             />
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={2}>
-          <Button variant="contained" color="primary" onClick={handleAddItem} startIcon={<AddIcon />}>
+        <Grid item xs={12} sm={4}>
+          <Button 
+            fullWidth
+            variant="contained" 
+            color="primary" 
+            onClick={handleAddItem} 
+            startIcon={<AddIcon />}
+            disabled={!selectedItem}
+          >
             Add Item
           </Button>
         </Grid>
       </Grid>
-      <Grid container spacing={3} sx={{ mt: 2 }}>
-        <Grid item xs={12}>
-          <Button type="submit" variant="contained" color="primary" onClick={handleSubmit}>
-            Make Prediction
-          </Button>
+      
+      <Box sx={{ mt: 3 }}>
+        {formData.map((item, index) => (
+          <Chip
+            key={index}
+            label={`${item.name}: ${item.quantity || 'Not set'}`}
+            onDelete={() => handleRemoveItem(index)}
+            color={item.quantity ? "primary" : "default"}
+            sx={{ m: 0.5 }}
+          />
+        ))}
+      </Box>
+      
+      {formData.length > 0 && (
+        <Grid container spacing={2} sx={{ mt: 2 }}>
+          {formData.map((item, index) => (
+            <Grid item xs={12} sm={6} key={index}>
+              <TextField
+                fullWidth
+                label={`Quantity for ${item.name}`}
+                name="quantity"
+                type="number"
+                value={item.quantity}
+                onChange={(e) => handleChange(index, e)}
+                required
+              />
+            </Grid>
+          ))}
         </Grid>
-      </Grid>
+      )}
+      
+      <Button 
+        type="submit" 
+        variant="contained" 
+        color="primary" 
+        onClick={handleSubmit}
+        disabled={formData.length === 0 || formData.some(item => !item.quantity)}
+        sx={{ mt: 3 }}
+        fullWidth
+      >
+        Make Prediction
+      </Button>
     </Paper>
   );
 };

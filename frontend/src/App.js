@@ -1,17 +1,27 @@
-// App.js
-
 import React, { useState } from 'react';
-import { Container, Typography, Box, AppBar, Toolbar, IconButton, Menu, MenuItem } from '@mui/material';
+import { Container, Typography, Box, AppBar, Toolbar, IconButton, Menu, MenuItem, CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import PredictionForm from './components/PredictionForm';
 import ResultDisplay from './components/ResultDisplay';
 import { makePrediction } from './api';
 import logo from './assets/logo.png';
 
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+    secondary: {
+      main: '#dc004e',
+    },
+  },
+});
+
 function App() {
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -23,42 +33,62 @@ function App() {
 
   const handleSubmit = async (formData) => {
     try {
+      setIsLoading(true);
       setError(null);
+      setResults(null);
       const data = await makePrediction(formData);
       setResults(data);
     } catch (err) {
       setError('An error occurred while making the prediction. Please try again.');
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <Container maxWidth="md">
-      <AppBar position="static">
-        <Toolbar>
-          <Box component="img" src={logo} alt="Company Logo" sx={{ height: 64, marginRight: 2 }} />
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            TMBA Sales Estimation Prediction Web App
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box sx={{ flexGrow: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <AppBar position="static">
+          <Toolbar>
+            <Box component="img" src={logo} alt="Company Logo" sx={{ height: 48, marginRight: 2 }} />
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              TMBA Sales Estimation Prediction
+            </Typography>
+            <IconButton edge="end" color="inherit" aria-label="menu" onClick={handleMenuClick}>
+              <MenuIcon />
+            </IconButton>
+            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+              <MenuItem onClick={handleMenuClose}>About</MenuItem>
+              <MenuItem onClick={handleMenuClose}>Help</MenuItem>
+            </Menu>
+          </Toolbar>
+        </AppBar>
+        <Container component="main" maxWidth="md" sx={{ mt: 4, mb: 4, flexGrow: 1 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Sales Prediction Tool
           </Typography>
-          <IconButton edge="end" color="inherit" aria-label="menu" onClick={handleMenuClick}>
-            <MenuIcon />
-          </IconButton>
-          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-            <MenuItem onClick={handleMenuClose}>About</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Help</MenuItem>
-          </Menu>
-        </Toolbar>
-      </AppBar>
-      <Box my={4}>
-        <PredictionForm onSubmit={handleSubmit} />
-        {error && (
-          <Typography color="error" style={{ marginTop: '20px' }}>
-            {error}
-          </Typography>
-        )}
-        <ResultDisplay results={results} />
+          <PredictionForm onSubmit={handleSubmit} />
+          {isLoading && (
+            <Typography sx={{ mt: 2 }}>Loading prediction results...</Typography>
+          )}
+          {error && (
+            <Typography color="error" sx={{ mt: 2 }}>
+              {error}
+            </Typography>
+          )}
+          {results && <ResultDisplay results={results} />}
+        </Container>
+        <Box component="footer" sx={{ py: 3, px: 2, mt: 'auto', backgroundColor: (theme) => theme.palette.grey[200] }}>
+          <Container maxWidth="sm">
+            <Typography variant="body2" color="text.secondary" align="center">
+              © {new Date().getFullYear()} TMBA Sales Estimation. All rights reserved.
+            </Typography>
+          </Container>
+        </Box>
       </Box>
-    </Container>
+    </ThemeProvider>
   );
 }
 
