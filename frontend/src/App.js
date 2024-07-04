@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Typography, Box, AppBar, Toolbar, IconButton, Menu, MenuItem, CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import { Container, Typography, Box, AppBar, Toolbar, IconButton, Menu, MenuItem, CssBaseline, ThemeProvider, createTheme, CircularProgress, Snackbar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import PredictionForm from './components/PredictionForm';
 import ResultDisplay from './components/ResultDisplay';
@@ -13,6 +13,9 @@ const theme = createTheme({
     },
     secondary: {
       main: '#dc004e',
+    },
+    background: {
+      default: '#f5f5f5',
     },
   },
 });
@@ -65,18 +68,15 @@ function App() {
             </Menu>
           </Toolbar>
         </AppBar>
-        <Container component="main" maxWidth="md" sx={{ mt: 4, mb: 4, flexGrow: 1 }}>
+        <Container component="main" maxWidth="lg" sx={{ mt: 4, mb: 4, flexGrow: 1 }}>
           <Typography variant="h4" component="h1" gutterBottom>
             Sales Prediction Tool
           </Typography>
           <PredictionForm onSubmit={handleSubmit} />
           {isLoading && (
-            <Typography sx={{ mt: 2 }}>Loading prediction results...</Typography>
-          )}
-          {error && (
-            <Typography color="error" sx={{ mt: 2 }}>
-              {error}
-            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+              <CircularProgress />
+            </Box>
           )}
           {results && <ResultDisplay results={results} />}
         </Container>
@@ -88,6 +88,12 @@ function App() {
           </Container>
         </Box>
       </Box>
+      <Snackbar
+        open={Boolean(error)}
+        autoHideDuration={6000}
+        onClose={() => setError(null)}
+        message={error}
+      />
     </ThemeProvider>
   );
 }
