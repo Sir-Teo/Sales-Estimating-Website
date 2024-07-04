@@ -1,11 +1,11 @@
-//src/components/ResultDisplay.js
+// src/components/ResultDisplay.js
 
 import React, { useState } from 'react';
-import { Typography, Paper, Grid, Card, CardContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton, Tooltip } from '@mui/material';
+import { Typography, Paper, Grid, Card, CardContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton, Tooltip, List, ListItem, ListItemText, ListSubheader } from '@mui/material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
-const ResultDisplay = ({ results }) => {
+const ResultDisplay = ({ results, inputs }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -43,7 +43,7 @@ const ResultDisplay = ({ results }) => {
                   <BarChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
-                    <YAxis />
+                    <YAxis tickCount={5} />
                     <RechartsTooltip />
                     <Bar dataKey="value" fill="#1976d2" />
                   </BarChart>
@@ -102,6 +102,23 @@ const ResultDisplay = ({ results }) => {
           </Card>
         </Grid>
       </Grid>
+
+      <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
+        Input Information
+      </Typography>
+      <Card elevation={3} sx={{ mt: 2 }}>
+        <CardContent>
+          <List
+            subheader={<ListSubheader>Items and Quantities</ListSubheader>}
+          >
+            {Object.entries(inputs).map(([name, quantity]) => (
+              <ListItem key={name}>
+                <ListItemText primary={name} secondary={`Quantity: ${quantity}`} />
+              </ListItem>
+            ))}
+          </List>
+        </CardContent>
+      </Card>
     </Paper>
   );
 };

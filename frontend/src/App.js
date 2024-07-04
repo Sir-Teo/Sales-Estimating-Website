@@ -1,3 +1,5 @@
+// src/App.js
+
 import React, { useState } from 'react';
 import { Container, Typography, Box, AppBar, Toolbar, IconButton, Menu, MenuItem, CssBaseline, ThemeProvider, createTheme, CircularProgress, Snackbar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -22,6 +24,7 @@ const theme = createTheme({
 
 function App() {
   const [results, setResults] = useState(null);
+  const [inputs, setInputs] = useState(null);
   const [error, setError] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +42,7 @@ function App() {
       setIsLoading(true);
       setError(null);
       setResults(null);
+      setInputs(formData);
       const data = await makePrediction(formData);
       setResults(data);
     } catch (err) {
@@ -78,7 +82,7 @@ function App() {
               <CircularProgress />
             </Box>
           )}
-          {results && <ResultDisplay results={results} />}
+          {results && <ResultDisplay results={results} inputs={inputs} />}
         </Container>
         <Box component="footer" sx={{ py: 3, px: 2, mt: 'auto', backgroundColor: (theme) => theme.palette.grey[200] }}>
           <Container maxWidth="sm">
