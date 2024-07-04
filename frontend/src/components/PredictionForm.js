@@ -61,6 +61,7 @@ const PredictionForm = ({ onSubmit }) => {
               getOptionLabel={(option) => option.code}
               value={selectedItem}
               onChange={(event, newValue) => setSelectedItem(newValue)}
+              isOptionEqualToValue={(option, value) => option.code === value.code}
               renderInput={(params) => <TextField {...params} label="Select Item" />}
             />
           </FormControl>
