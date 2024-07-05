@@ -5,7 +5,7 @@ import { Typography, Paper, Grid, Card, CardContent, Table, TableBody, TableCell
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
-const ResultDisplay = ({ results, inputs }) => {
+const ResultDisplay = ({ results = {}, inputs = {} }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -26,14 +26,14 @@ const ResultDisplay = ({ results, inputs }) => {
   };
 
   return (
-    <Paper sx={{ padding: 3, mt: 3 }}>
-      <Typography variant="h6" gutterBottom>
-        Prediction Results
+    <Paper sx={{ padding: 3, mt: 3, mb: 3 }}>
+      <Typography variant="h4" gutterBottom>
+        Prediction Results For Model 1
       </Typography>
       
-      <Grid container spacing={3}>
+      <Grid container spacing={4}>
         <Grid item xs={12} md={6}>
-          <Card elevation={3}>
+          <Card elevation={4} sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 Sales Prediction Chart
@@ -54,7 +54,7 @@ const ResultDisplay = ({ results, inputs }) => {
         </Grid>
         
         <Grid item xs={12} md={6}>
-          <Card elevation={3}>
+          <Card elevation={4} sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 Detailed Results Table
@@ -103,14 +103,12 @@ const ResultDisplay = ({ results, inputs }) => {
         </Grid>
       </Grid>
 
-      <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
+      <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
         Input Information
       </Typography>
-      <Card elevation={3} sx={{ mt: 2 }}>
+      <Card elevation={4} sx={{ mt: 2 }}>
         <CardContent>
-          <List
-            subheader={<ListSubheader>Items and Quantities</ListSubheader>}
-          >
+          <List subheader={<ListSubheader>Items and Quantities</ListSubheader>}>
             {Object.entries(inputs).map(([name, quantity]) => (
               <ListItem key={name}>
                 <ListItemText primary={name} secondary={`Quantity: ${quantity}`} />
