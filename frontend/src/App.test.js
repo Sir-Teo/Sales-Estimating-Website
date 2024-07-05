@@ -11,7 +11,76 @@ jest.mock('./api', () => ({
 }));
 
 describe('App Component', () => {
-  // ... [Previous tests remain unchanged]
+  test('renders the app title', () => {
+    render(<App />);
+    expect(screen.getByText('TMBA Sales Estimation Prediction')).toBeInTheDocument();
+  });
+
+  test('renders the prediction form', () => {
+    render(<App />);
+    expect(screen.getByText('Enter Prediction Data')).toBeInTheDocument();
+  });
+
+  test('opens and closes the menu', () => {
+    render(<App />);
+    const menuButton = screen.getByLabelText('menu');
+    
+    fireEvent.click(menuButton);
+    expect(screen.getByText('About')).toBeInTheDocument();
+    expect(screen.getByText('Help')).toBeInTheDocument();
+
+    fireEvent.click(menuButton); // Close the menu
+    expect(screen.queryByText('About')).not.toBeInTheDocument();
+  });
+
+  test('submits the prediction form and displays results', async () => {
+    const mockResults = {
+      item1: 100,
+      item2: 200,
+    };
+    makePrediction.mockResolvedValue(mockResults);
+
+    render(<App />);
+
+    // Fill out the form (you may need to adjust this based on your actual form implementation)
+    const selectInput = screen.getByLabelText('Select Item');
+    fireEvent.change(selectInput, { target: { value: 'CO01' } });
+    fireEvent.click(screen.getByText('Add Item'));
+
+    const quantityInput = screen.getByLabelText('Quantity for CO01');
+    fireEvent.change(quantityInput, { target: { value: '5' } });
+
+    // Submit the form
+    fireEvent.click(screen.getByText('Make Prediction'));
+
+    // Wait for results to be displayed
+    await waitFor(() => {
+      expect(screen.getByText('Prediction Results For Model 1')).toBeInTheDocument();
+    });
+
+    // Check if the chart and table are rendered
+    expect(screen.getByText('Sales Prediction Chart')).toBeInTheDocument();
+    expect(screen.getByText('Detailed Results Table')).toBeInTheDocument();
+  });
+
+  test('displays error message when prediction fails', async () => {
+    makePrediction.mockRejectedValue(new Error('API Error'));
+
+    render(<App />);
+
+    // Fill out and submit the form (simplified for brevity)
+    const selectInput = screen.getByLabelText('Select Item');
+    fireEvent.change(selectInput, { target: { value: 'CO01' } });
+    fireEvent.click(screen.getByText('Add Item'));
+    const quantityInput = screen.getByLabelText('Quantity for CO01');
+    fireEvent.change(quantityInput, { target: { value: '5' } });
+    fireEvent.click(screen.getByText('Make Prediction'));
+
+    // Wait for error message
+    await waitFor(() => {
+      expect(screen.getByText('An error occurred while making the prediction. Please try again.')).toBeInTheDocument();
+    });
+  });
 
   test('renders the company logo', () => {
     render(<App />);
