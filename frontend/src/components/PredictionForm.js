@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { TextField, Button, Grid, Typography, Paper, FormControl, Box, Chip } from '@mui/material';
 import { Autocomplete } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 
 const groupsManual = {
   'Master_Controllers': ['CO01', 'CO06', 'AN09', 'SX01', 'TD01', 'DC01', 'DC02', 'DC09'],
@@ -87,7 +89,7 @@ const PredictionForm = ({ onSubmit }) => {
           key={index}
           label={`${item.name}: ${item.quantity || 'Not set'}`}
           onDelete={() => handleRemoveItem(index)}
-          deleteIcon={<Button size="small">Delete</Button>}
+          deleteIcon={<DeleteIcon data-testid={`delete-icon-${index}`} />}
           color={item.quantity ? "primary" : "default"}
           sx={{ m: 0.5 }}
           />

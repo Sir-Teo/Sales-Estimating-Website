@@ -44,8 +44,8 @@ describe('App Component', () => {
     expect(screen.getByText(/CO01:/)).toBeInTheDocument();
 
     // Remove the item
-    const chip = screen.getByText(/CO01:/);
-    const deleteButton = within(chip.closest('.MuiChip-root')).getByRole('button', { name: /delete/i });
+    const chip = screen.getByText(/CO01:/).closest('.MuiChip-root');
+    const deleteButton = within(chip).getByTestId(/delete-icon-0/);
     await user.click(deleteButton);
 
     // Check if the item chip is removed
