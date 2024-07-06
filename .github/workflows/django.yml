@@ -46,7 +46,6 @@ jobs:
     - name: Run backend tests
       run: |
         cd backend/ml_webapp
-        python manage.py migrate
         python manage.py test
 
     - name: Start backend
