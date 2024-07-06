@@ -4,4 +4,5 @@ drf_yasg==1.21.7
 joblib==1.2.0
 pandas
 numpy
+sklearn
 django-cors-headers==3.14.0
