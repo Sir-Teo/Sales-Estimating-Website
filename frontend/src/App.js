@@ -79,7 +79,7 @@ function App() {
           <PredictionForm onSubmit={handleSubmit} />
           {isLoading && (
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-              <CircularProgress />
+              <CircularProgress role="progressbar" />
             </Box>
           )}
           {results && <ResultDisplay results={results} inputs={inputs} />}
@@ -87,7 +87,7 @@ function App() {
         <Box component="footer" sx={{ py: 3, px: 2, mt: 'auto', backgroundColor: (theme) => theme.palette.grey[200] }}>
           <Container maxWidth="sm">
             <Typography variant="body2" color="text.secondary" align="center">
-              © {new Date().getFullYear()} TMBA. All rights reserved.
+              © {new Date().getFullYear()} TMBA All rights reserved.
             </Typography>
           </Container>
         </Box>

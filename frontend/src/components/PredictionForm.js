@@ -45,6 +45,7 @@ const PredictionForm = ({ onSubmit }) => {
       return acc;
     }, {});
     onSubmit(data);
+    setFormData([]); // Clear the form data
   };
 
   return (
@@ -83,11 +84,12 @@ const PredictionForm = ({ onSubmit }) => {
       <Box sx={{ mt: 3 }}>
         {formData.map((item, index) => (
           <Chip
-            key={index}
-            label={`${item.name}: ${item.quantity || 'Not set'}`}
-            onDelete={() => handleRemoveItem(index)}
-            color={item.quantity ? "primary" : "default"}
-            sx={{ m: 0.5 }}
+          key={index}
+          label={`${item.name}: ${item.quantity || 'Not set'}`}
+          onDelete={() => handleRemoveItem(index)}
+          deleteIcon={<Button size="small">Delete</Button>}
+          color={item.quantity ? "primary" : "default"}
+          sx={{ m: 0.5 }}
           />
         ))}
       </Box>
