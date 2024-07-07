@@ -48,9 +48,4 @@ jobs:
         cd backend/ml_webapp
         python manage.py test
 
-    - name: Start backend
-      run: |
-        cd backend/ml_webapp
-        python manage.py runserver
-
 
