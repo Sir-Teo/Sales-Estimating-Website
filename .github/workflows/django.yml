@@ -45,8 +45,8 @@ jobs:
 
     - name: Create test_user and test_db in PostgreSQL
       run: |
-        docker exec -it $(docker ps -qf "name=postgres") psql -U postgres -c "CREATE USER test_user WITH PASSWORD 'test_password';"
-        docker exec -it $(docker ps -qf "name=postgres") psql -U postgres -c "CREATE DATABASE test_db OWNER test_user;"
+        docker exec $(docker ps -qf "name=postgres") psql -U postgres -c "CREATE USER test_user WITH PASSWORD 'test_password';"
+        docker exec $(docker ps -qf "name=postgres") psql -U postgres -c "CREATE DATABASE test_db OWNER test_user;"
 
     - name: Create static directory
       run: |
