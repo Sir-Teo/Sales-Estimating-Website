@@ -22,7 +22,7 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U postgres"
+          --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -43,13 +43,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Wait for PostgreSQL to be ready
-      run: |
-        until docker exec -it $(docker ps -qf "name=postgres") pg_isready -U postgres; do
-          echo "Waiting for PostgreSQL to be ready..."
-          sleep 1
-        done
-
     - name: Create test_user and test_db in PostgreSQL
       run: |
         docker exec -it $(docker ps -qf "name=postgres") psql -U postgres -c "CREATE USER test_user WITH PASSWORD 'test_password';"
@@ -61,7 +54,7 @@ jobs:
 
     - name: Run backend tests
       env:
-        DATABASE_URL: postgres://test_user:test_password@127.0.0.1:5432/test_db
+        DATABASE_URL: postgres://test_user:test_password@localhost:5432/test_db
       run: |
         cd backend/ml_webapp
         python manage.py test
