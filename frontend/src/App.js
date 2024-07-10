@@ -6,7 +6,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import PredictionForm from './components/PredictionForm';
 import ResultDisplay from './components/ResultDisplay';
 import { makePrediction } from './api';
-import logo from './assets/logo.png';
+import logo from './assets/TMBA Logo 2020 white transparent.png';
 
 const theme = createTheme({
   palette: {

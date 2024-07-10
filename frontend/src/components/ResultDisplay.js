@@ -1,13 +1,12 @@
 // src/components/ResultDisplay.js
 
 import React, { useState } from 'react';
-import { Typography, Paper, Grid, Card, CardContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton, Tooltip, List, ListItem, ListItemText, ListSubheader } from '@mui/material';
+import { Typography, Paper, Grid, Card, CardContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, List, ListItem, ListItemText, ListSubheader } from '@mui/material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 const ResultDisplay = ({ results = {}, inputs = {} }) => {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   if (!results) return null;
 
@@ -30,13 +29,13 @@ const ResultDisplay = ({ results = {}, inputs = {} }) => {
       <Typography variant="h4" gutterBottom>
         Prediction Results For Model 1
       </Typography>
-      
+
       <Grid container spacing={4}>
         <Grid item xs={12} md={6}>
           <Card elevation={4} sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Sales Prediction Chart
+                Prediction Results Chart
               </Typography>
               <div style={{ width: '100%', height: 300 }}>
                 <ResponsiveContainer>
@@ -52,7 +51,7 @@ const ResultDisplay = ({ results = {}, inputs = {} }) => {
             </CardContent>
           </Card>
         </Grid>
-        
+
         <Grid item xs={12} md={6}>
           <Card elevation={4} sx={{ height: '100%' }}>
             <CardContent>
@@ -60,12 +59,11 @@ const ResultDisplay = ({ results = {}, inputs = {} }) => {
                 Detailed Results Table
               </Typography>
               <TableContainer>
-                <Table>
+                <Table size="small">
                   <TableHead>
                     <TableRow>
                       <TableCell>Item</TableCell>
-                      <TableCell align="right">Predicted Sales</TableCell>
-                      <TableCell align="right">Info</TableCell>
+                      <TableCell align="right">Quantity (Hours)</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -77,20 +75,13 @@ const ResultDisplay = ({ results = {}, inputs = {} }) => {
                             {row.name}
                           </TableCell>
                           <TableCell align="right">{row.value}</TableCell>
-                          <TableCell align="right">
-                            <Tooltip title="Click for more information">
-                              <IconButton size="small" onClick={() => alert(`More info about ${row.name}`)}>
-                                <InfoOutlinedIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </TableCell>
                         </TableRow>
                       ))}
                   </TableBody>
                 </Table>
               </TableContainer>
               <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
+                rowsPerPageOptions={[10, 25, 50]}
                 component="div"
                 count={chartData.length}
                 rowsPerPage={rowsPerPage}
