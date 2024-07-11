@@ -1,5 +1,3 @@
-# ml_api/views.py
-
 import logging
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -16,8 +14,14 @@ class PredictionView(APIView):
         input_serializer = InputSerializer(data=request.data)
         if input_serializer.is_valid():
             try:
-                prediction = predict(input_serializer.validated_data)
+                rf_predictions, xgb_predictions, closest_rows = predict(input_serializer.validated_data)
                 
+                prediction = {
+                    'rf_predictions': rf_predictions,
+                    'xgb_predictions': xgb_predictions,
+                    'closest_rows': closest_rows.to_dict(orient='records')  # Convert dataframe to list of dicts
+                }
+
                 output_serializer = OutputSerializer(data=prediction)
                 if output_serializer.is_valid():
                     logger.info(f"Prediction successful: {output_serializer.data}")

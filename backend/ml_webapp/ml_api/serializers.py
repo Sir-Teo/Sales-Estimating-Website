@@ -1,5 +1,3 @@
-# serializers.py
-
 from rest_framework import serializers
 
 # Define the groups_manual for reference
@@ -26,25 +24,31 @@ class InputSerializer(serializers.Serializer):
 for field_name, field_instance in input_fields.items():
     InputSerializer._declared_fields[field_name] = field_instance
 
-# Define the output fields similarly if needed
-output_fields = {
-    'HO02': serializers.FloatField(),
-    'HO03': serializers.FloatField(),
-    'HO04': serializers.FloatField(),
-    'HO05': serializers.FloatField(),
-    'HO06': serializers.FloatField(),
-    'HO07': serializers.FloatField(),
-    'HO08': serializers.FloatField(),
-    'HO09': serializers.FloatField(),
-    'HO10': serializers.FloatField(),
-    'HO11': serializers.FloatField(),
-    'HO12': serializers.FloatField(),
-    # Add more fields as needed
-}
+# Define the output fields
+class PredictionSerializer(serializers.Serializer):
+    HO02 = serializers.FloatField()
+    HO03 = serializers.FloatField()
+    HO04 = serializers.FloatField()
+    HO05 = serializers.FloatField()
+    HO06 = serializers.FloatField()
+    HO07 = serializers.FloatField()
+    HO08 = serializers.FloatField()
+    HO09 = serializers.FloatField()
+    HO10 = serializers.FloatField()
+    HO11 = serializers.FloatField()
+    HO12 = serializers.FloatField()
 
-# Dynamically create the OutputSerializer class
+class ClosestRowSerializer(serializers.Serializer):
+    # Dynamically add all possible fields
+    def __init__(self, *args, **kwargs):
+        super(ClosestRowSerializer, self).__init__(*args, **kwargs)
+        for code in all_codes:
+            self.fields[code] = serializers.FloatField(required=False)
+        # Add HO fields
+        for i in range(2, 13):
+            self.fields[f'HO{i:02d}'] = serializers.FloatField(required=False)
+
 class OutputSerializer(serializers.Serializer):
-    pass
-
-for field_name, field_instance in output_fields.items():
-    OutputSerializer._declared_fields[field_name] = field_instance
+    rf_predictions = PredictionSerializer()
+    xgb_predictions = PredictionSerializer()
+    closest_rows = ClosestRowSerializer(many=True)

@@ -28,17 +28,6 @@ output_columns = pivot_grouped_df.columns.tolist()
 
 y = pivot_grouped_df[output_columns]
 
-def predict_ten_closest_rows(input_data):
-    # Normalize the input data
-    input_data_scaled = knn_scaler.transform(input_data)
-    # Find the ten closest rows
-    distances, indices = knn_model.kneighbors(input_data_scaled)
-    # Get the closest rows from the original dataset
-    # Note: You need to have access to the original 'y' dataframe here
-    # If you don't have it in memory, you may need to load it from a file
-    closest_rows = y.iloc[indices[0]]
-    return closest_rows
-
 # Define groups_manual again for reference
 groups_manual = {
     'Master_Controllers': ['CO01', 'CO06', 'AN09', 'SX01', 'TD01', 'DC01', 'DC02', 'DC09'],
@@ -52,6 +41,17 @@ groups_manual = {
 
 # Flatten the dictionary into a list of all possible codes
 all_codes = [code for group in groups_manual.values() for code in group]
+
+def predict_ten_closest_rows(input_data):
+    # Normalize the input data
+    input_data_scaled = knn_scaler.transform(input_data)
+    # Find the ten closest rows
+    distances, indices = knn_model.kneighbors(input_data_scaled)
+    # Get the closest rows from the original dataset
+    # Note: You need to have access to the original 'y' dataframe here
+    # If you don't have it in memory, you may need to load it from a file
+    closest_rows = y.iloc[indices[0]]
+    return closest_rows
 
 def predict(input_data):
     """
@@ -97,9 +97,9 @@ def predict(input_data):
     return rf_predictions, xgb_predictions, top_10_closest_rows
 
 # Test the function with an example input
-if __name__ == '__main__':
-    fake_data = {
-        'CO01': 1,
-        'CO06': 0,
-    }
-    print(predict(fake_data))
+# if __name__ == '__main__':
+#     fake_data = {
+#         'CO01': 1,
+#         'CO06': 0,
+#     }
+#     print(predict(fake_data))
