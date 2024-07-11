@@ -38,6 +38,10 @@ class PredictionSerializer(serializers.Serializer):
     HO11 = serializers.FloatField()
     HO12 = serializers.FloatField()
 
+# Define the possible string fields, here we assume all_codes includes only numerical fields,
+# so adding additional potential string fields manually.
+string_fields = ['JobNumber', 'JobDescription']  # Example string fields, replace with actual ones
+
 class ClosestRowSerializer(serializers.Serializer):
     # Dynamically add all possible fields
     def __init__(self, *args, **kwargs):
@@ -47,6 +51,9 @@ class ClosestRowSerializer(serializers.Serializer):
         # Add HO fields
         for i in range(2, 13):
             self.fields[f'HO{i:02d}'] = serializers.FloatField(required=False)
+        # Add potential string fields
+        for field in string_fields:
+            self.fields[field] = serializers.CharField(required=False)
 
 class OutputSerializer(serializers.Serializer):
     rf_predictions = PredictionSerializer()
