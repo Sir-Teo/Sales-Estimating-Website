@@ -8,10 +8,36 @@ import os
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Construct the path to the model file
-model_path = os.path.join(current_dir, '..', 'rf_models.joblib')
+rf_model_path = os.path.join(current_dir, '..', 'rf_models.joblib')
+xgb_model_path = os.path.join(current_dir, '..', 'xgb_models.joblib')
+knn_model_path = os.path.join(current_dir, '..', 'knn_model.joblib')
+knn_scalar_path = os.path.join(current_dir, '..', 'knn_scaler.joblib')
+
 
 # Load the trained models
-rf_models = joblib.load(model_path)
+rf_models = joblib.load(rf_model_path)
+xgb_models = joblib.load(xgb_model_path)
+knn_model = joblib.load(knn_model_path)
+knn_scaler = joblib.load(knn_scalar_path)
+
+# Load the original data
+pivot_grouped_df = pd.read_csv(os.path.join(current_dir, '..', 'pivot_grouped.csv'))
+
+input_features = ['Master_Controllers', 'Field_Controllers', 'Sensors', 'Panels', 'Software', 'Computers']
+output_columns = pivot_grouped_df.columns.tolist()
+
+y = pivot_grouped_df[output_columns]
+
+def predict_ten_closest_rows(input_data):
+    # Normalize the input data
+    input_data_scaled = knn_scaler.transform(input_data)
+    # Find the ten closest rows
+    distances, indices = knn_model.kneighbors(input_data_scaled)
+    # Get the closest rows from the original dataset
+    # Note: You need to have access to the original 'y' dataframe here
+    # If you don't have it in memory, you may need to load it from a file
+    closest_rows = y.iloc[indices[0]]
+    return closest_rows
 
 # Define groups_manual again for reference
 groups_manual = {
@@ -58,8 +84,22 @@ def predict(input_data):
     df = df.drop(columns=[code for group in groups_manual.values() for code in group])
     
     # Make predictions
-    predictions = {}
+    rf_predictions = {}
     for ho_col, model in rf_models.items():
-        predictions[ho_col] = float(model.predict(df[['Master_Controllers', 'Field_Controllers', 'Sensors', 'Panels', 'Software', 'Computers']])[0])
+        rf_predictions[ho_col] = float(model.predict(df[['Master_Controllers', 'Field_Controllers', 'Sensors', 'Panels', 'Software', 'Computers']])[0])
     
-    return predictions
+    xgb_predictions = {}
+    for ho_col, model in xgb_models.items():
+        xgb_predictions[ho_col] = float(model.predict(df[['Master_Controllers', 'Field_Controllers', 'Sensors', 'Panels', 'Software', 'Computers']])[0])
+
+    top_10_closest_rows = predict_ten_closest_rows(df[['Master_Controllers', 'Field_Controllers', 'Sensors', 'Panels', 'Software', 'Computers']])
+
+    return rf_predictions, xgb_predictions, top_10_closest_rows
+
+# Test the function with an example input
+if __name__ == '__main__':
+    fake_data = {
+        'CO01': 1,
+        'CO06': 0,
+    }
+    print(predict(fake_data))
