@@ -19,6 +19,11 @@ const ResultDisplay = ({ results = {}, inputs = {} }) => {
       </Typography>
 
       <Grid container spacing={4}>
+
+        <Grid item xs={12} >
+          <InputInformation inputs={inputs} />
+        </Grid>
+
         <Grid item xs={12}>
           <PredictionChart chartData={chartData} />
         </Grid>
@@ -27,11 +32,7 @@ const ResultDisplay = ({ results = {}, inputs = {} }) => {
           <DetailedResultsTable chartData={chartData} />
         </Grid>
 
-        <Grid item xs={12} md={6}>
-          <InputInformation inputs={inputs} />
-        </Grid>
-
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} >
           <ClosestRows closest_rows={closest_rows} />
         </Grid>
       </Grid>

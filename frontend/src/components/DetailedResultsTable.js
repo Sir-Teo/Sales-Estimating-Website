@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Typography, Card, CardContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination } from '@mui/material';
 
 const DetailedResultsTable = ({ chartData }) => {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(11);
+  const [dataWithMean, setDataWithMean] = useState([]);
+
+  useEffect(() => {
+    // Calculate the mean for each row and set the new state
+    const updatedData = chartData.map(row => ({
+      ...row,
+      mean: ((row.RF + row.XGB) / 2).toFixed(2) // calculate mean and format to 2 decimal places
+    }));
+    setDataWithMean(updatedData);
+  }, [chartData]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -27,10 +37,11 @@ const DetailedResultsTable = ({ chartData }) => {
                 <TableCell>Item</TableCell>
                 <TableCell align="right">RF Prediction (Hours)</TableCell>
                 <TableCell align="right">XGB Prediction (Hours)</TableCell>
+                <TableCell align="right"><b>Mean of RF and XGB (Hours</b>)</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {chartData
+              {dataWithMean
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <TableRow key={row.name} hover>
@@ -39,15 +50,16 @@ const DetailedResultsTable = ({ chartData }) => {
                     </TableCell>
                     <TableCell align="right">{row.RF}</TableCell>
                     <TableCell align="right">{row.XGB}</TableCell>
+                    <TableCell align="right"><b>{row.mean}</b></TableCell>
                   </TableRow>
                 ))}
             </TableBody>
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
+          rowsPerPageOptions={[11, 25, 50]}
           component="div"
-          count={chartData.length}
+          count={dataWithMean.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
