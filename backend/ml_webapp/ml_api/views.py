@@ -14,8 +14,12 @@ class PredictionView(APIView):
         input_serializer = InputSerializer(data=request.data)
         if input_serializer.is_valid():
             try:
-                rf_predictions, xgb_predictions, closest_rows = predict(input_serializer.validated_data)
+                prediction_results = predict(input_serializer.validated_data)
                 
+                rf_predictions = prediction_results['Random Forest']
+                xgb_predictions = prediction_results['XGBoost']
+                closest_rows = prediction_results['k-NN']
+
                 prediction = {
                     'rf_predictions': rf_predictions,
                     'xgb_predictions': xgb_predictions,

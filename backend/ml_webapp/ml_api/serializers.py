@@ -46,14 +46,14 @@ class ClosestRowSerializer(serializers.Serializer):
     # Dynamically add all possible fields
     def __init__(self, *args, **kwargs):
         super(ClosestRowSerializer, self).__init__(*args, **kwargs)
+        for field in string_fields:
+            self.fields[field] = serializers.CharField(required=False)
         for code in all_codes:
             self.fields[code] = serializers.FloatField(required=False)
         # Add HO fields
         for i in range(2, 13):
             self.fields[f'HO{i:02d}'] = serializers.FloatField(required=False)
-        # Add potential string fields
-        for field in string_fields:
-            self.fields[field] = serializers.CharField(required=False)
+        
 
 class OutputSerializer(serializers.Serializer):
     rf_predictions = PredictionSerializer()
