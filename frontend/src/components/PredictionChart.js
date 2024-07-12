@@ -3,6 +3,7 @@ import { Typography, Card, CardContent } from '@mui/material';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LabelList, Legend
 } from 'recharts';
+import CustomTooltip from './CustomTooltip';
 
 const PredictionChart = ({ chartData }) => (
   <Card elevation={4}>
@@ -29,7 +30,7 @@ const PredictionChart = ({ chartData }) => (
               tick={{ fontSize: 12 }}
               label={{ value: 'Hours', angle: -90, position: 'insideLeft', fontSize: 14 }}
             />
-            <RechartsTooltip />
+            <RechartsTooltip content={<CustomTooltip />} />
             <Legend wrapperStyle={{ paddingTop: '20px' }} />
             <Bar dataKey="RF" fill="#1976d2" name="Random Forest">
               <LabelList dataKey="RF" position="top" angle={-45} fontSize={10} />
