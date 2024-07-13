@@ -130,11 +130,11 @@ const ResultDisplay = ({ results = {}, inputs = {} }) => {
         </Grid>
 
         <Grid item xs={12}>
-          <DetailedResultsTable chartData={chartData} />
+          <DetailedResultsTable chartData={chartData} descriptions={descriptions} />
         </Grid>
 
         <Grid item xs={12}>
-          <ClosestRows closest_rows={closest_rows} />
+          <ClosestRows closest_rows={closest_rows} descriptions={descriptions} />
         </Grid>
       </Grid>
     </Paper>

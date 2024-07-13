@@ -5,7 +5,7 @@ const CustomTooltip = ({ active, payload, label }) => {
     const data = payload[0].payload;
     return (
       <Paper sx={{ padding: 2, borderRadius: 2, boxShadow: 3 }}>
-        <Box mb={1}>
+        <Box mb={0.5}>
           <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
             {label}
           </Typography>
@@ -13,7 +13,7 @@ const CustomTooltip = ({ active, payload, label }) => {
         <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
           {data.description}
         </Typography>
-        <Box display="flex" justifyContent="space-between">
+        <Box>
           <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
             RF: {data.RF}
           </Typography>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Card, CardContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination } from '@mui/material';
 
-const DetailedResultsTable = ({ chartData }) => {
+const DetailedResultsTable = ({ chartData, descriptions }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(11);
   const [dataWithMean, setDataWithMean] = useState([]);
@@ -10,10 +10,11 @@ const DetailedResultsTable = ({ chartData }) => {
     // Calculate the mean for each row and set the new state
     const updatedData = chartData.map(row => ({
       ...row,
-      mean: ((row.RF + row.XGB) / 2).toFixed(2) // calculate mean and format to 2 decimal places
+      mean: ((row.RF + row.XGB) / 2).toFixed(2), // calculate mean and format to 2 decimal places
+      description: descriptions[row.name] // append the description
     }));
     setDataWithMean(updatedData);
-  }, [chartData]);
+  }, [chartData, descriptions]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -37,7 +38,7 @@ const DetailedResultsTable = ({ chartData }) => {
                 <TableCell>Item</TableCell>
                 <TableCell align="right">RF Prediction (Hours)</TableCell>
                 <TableCell align="right">XGB Prediction (Hours)</TableCell>
-                <TableCell align="right"><b>Mean of RF and XGB (Hours</b>)</TableCell>
+                <TableCell align="right"><b>Mean of RF and XGB (Hours)</b></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -46,7 +47,7 @@ const DetailedResultsTable = ({ chartData }) => {
                 .map((row) => (
                   <TableRow key={row.name} hover>
                     <TableCell component="th" scope="row">
-                      {row.name}
+                      {row.name} - {row.description}
                     </TableCell>
                     <TableCell align="right">{row.RF}</TableCell>
                     <TableCell align="right">{row.XGB}</TableCell>
