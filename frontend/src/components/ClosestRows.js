@@ -7,6 +7,17 @@ const ClosestRows = ({ closest_rows, descriptions }) => {
     console.log('closest_rows:', closest_rows);
   }, [descriptions, closest_rows]);
 
+  const getTooltipContent = (key, value, row) => {
+    const description = descriptions[key] || 'No description available';
+    const jobDescription = row['JobDescription'] || 'No job description available';
+    return (
+      <>
+        <div><strong>Description:</strong> {description}</div>
+        <div><strong>Job Description:</strong> {jobDescription}</div>
+      </>
+    );
+  };
+
   return (
     <Card elevation={4} sx={{ height: '100%' }}>
       <CardContent>
@@ -19,7 +30,11 @@ const ClosestRows = ({ closest_rows, descriptions }) => {
               <TableRow>
                 <TableCell>Row</TableCell>
                 {Object.keys(closest_rows[0] || {}).map(key => (
-                  <TableCell key={key} align="right">{key}</TableCell>
+                  <TableCell key={key} align="right">
+                    <Tooltip title={descriptions[key] || ''} arrow>
+                      <span style={{ display: 'inline-block' }}>{key}</span>
+                    </Tooltip>
+                  </TableCell>
                 ))}
               </TableRow>
             </TableHead>
@@ -31,13 +46,9 @@ const ClosestRows = ({ closest_rows, descriptions }) => {
                   </TableCell>
                   {Object.entries(row).map(([key, value], cellIndex) => (
                     <TableCell key={cellIndex} align="right">
-                      {descriptions[key] ? (
-                        <Tooltip title={descriptions[key]} arrow>
-                          <span style={{ display: 'inline-block' }}>{value}</span>
-                        </Tooltip>
-                      ) : (
-                        value
-                      )}
+                      <Tooltip title={getTooltipContent(key, value, row)} arrow>
+                        <span style={{ display: 'inline-block' }}>{value}</span>
+                      </Tooltip>
                     </TableCell>
                   ))}
                 </TableRow>
