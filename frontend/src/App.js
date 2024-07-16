@@ -1,11 +1,12 @@
 // src/App.js
 
 import React, { useState } from 'react';
-import { Container, Typography, Box, AppBar, Toolbar, IconButton, Menu, MenuItem, CssBaseline, ThemeProvider, createTheme, CircularProgress, Snackbar } from '@mui/material';
+import { Container, Typography, Box, AppBar, Toolbar, IconButton, Menu, MenuItem, CssBaseline, ThemeProvider, createTheme, CircularProgress, Snackbar, Button } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import PredictionForm from './components/PredictionForm';
 import ResultDisplay from './components/ResultDisplay';
-import { makePrediction } from './api';
+import LoginForm from './components/LoginForm';
+import { makePrediction, login } from './api';
 import logo from './assets/TMBA Logo 2020 white transparent.png';
 
 const theme = createTheme({
@@ -28,6 +29,8 @@ function App() {
   const [error, setError] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -53,6 +56,28 @@ function App() {
     }
   };
 
+  const handleLogin = async (credentials) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const userData = await login(credentials);
+      setUser(userData);
+      setIsLoggedIn(true);
+    } catch (err) {
+      setError('Login failed. Please check your credentials and try again.');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    setIsLoggedIn(false);
+    setResults(null);
+    setInputs(null);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -63,6 +88,16 @@ function App() {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               TMBA Sales Estimation Prediction
             </Typography>
+            {isLoggedIn && (
+              <>
+                <Typography variant="body1" sx={{ mr: 2 }}>
+                  Welcome, {user.username}
+                </Typography>
+                <Button color="inherit" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </>
+            )}
             <IconButton edge="end" color="inherit" aria-label="menu" onClick={handleMenuClick}>
               <MenuIcon />
             </IconButton>
@@ -76,13 +111,19 @@ function App() {
           <Typography variant="h4" component="h1" gutterBottom>
             Sales Prediction Tool
           </Typography>
-          <PredictionForm onSubmit={handleSubmit} />
-          {isLoading && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-              <CircularProgress role="progressbar" />
-            </Box>
+          {!isLoggedIn ? (
+            <LoginForm onLogin={handleLogin} />
+          ) : (
+            <>
+              <PredictionForm onSubmit={handleSubmit} />
+              {isLoading && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                  <CircularProgress role="progressbar" />
+                </Box>
+              )}
+              {results && <ResultDisplay results={results} inputs={inputs} />}
+            </>
           )}
-          {results && <ResultDisplay results={results} inputs={inputs} />}
         </Container>
         <Box component="footer" sx={{ py: 3, px: 2, mt: 'auto', backgroundColor: (theme) => theme.palette.grey[200] }}>
           <Container maxWidth="sm">

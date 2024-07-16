@@ -14,3 +14,14 @@ export const makePrediction = async (inputData) => {
     throw error;
   }
 };
+
+export const login = async (credentials) => {
+  try {
+    const response = await axios.post(`${API_URL}/login/`, credentials);
+    console.log('Login response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error logging in:', error);
+    throw error;
+  }
+};
