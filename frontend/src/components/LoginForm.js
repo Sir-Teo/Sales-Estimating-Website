@@ -1,19 +1,45 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { TextField, Button, Box, Typography, Link } from '@mui/material';
 
-const LoginForm = ({ onLogin }) => {
+const LoginForm = ({ onLogin, onRegister }) => {
+  const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!username || !email || !password) {
-      setError('Please enter username, email, and password');
-      return;
+    setError('');
+
+    if (isLogin) {
+      if (!username || !email || !password) {
+        setError('Please enter username, email, and password');
+        return;
+      }
+      onLogin({ username, email, password });
+    } else {
+      if (!username || !email || !password || !confirmPassword) {
+        setError('Please fill in all fields');
+        return;
+      }
+      if (password !== confirmPassword) {
+        setError('Passwords do not match');
+        return;
+      }
+      onRegister({ username, email, password });
     }
-    onLogin({ username, email, password });
+  };
+
+  const toggleMode = () => {
+    setIsLogin(!isLogin);
+    setError('');
+    // Clear all fields when switching modes
+    setUsername('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
   };
 
   return (
@@ -26,9 +52,9 @@ const LoginForm = ({ onLogin }) => {
         label="Username"
         name="username"
         autoComplete="username"
-        autoFocus
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        autoFocus
       />
       <TextField
         margin="normal"
@@ -54,6 +80,19 @@ const LoginForm = ({ onLogin }) => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
+      {!isLogin && (
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          name="confirmPassword"
+          label="Confirm Password"
+          type="password"
+          id="confirmPassword"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
+      )}
       {error && (
         <Typography color="error" variant="body2" sx={{ mt: 1 }}>
           {error}
@@ -65,8 +104,16 @@ const LoginForm = ({ onLogin }) => {
         variant="contained"
         sx={{ mt: 3, mb: 2 }}
       >
-        Sign In
+        {isLogin ? 'Sign In' : 'Register'}
       </Button>
+      <Link
+        component="button"
+        variant="body2"
+        onClick={toggleMode}
+        sx={{ display: 'block', textAlign: 'center' }}
+      >
+        {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Sign In"}
+      </Link>
     </Box>
   );
 };

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Typography, Box, AppBar, Toolbar, IconButton, Menu, MenuItem, CssBaseline, ThemeProvider, createTheme, CircularProgress, Snackbar, Button } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import PredictionForm from './components/PredictionForm';
 import ResultDisplay from './components/ResultDisplay';
 import LoginForm from './components/LoginForm';
-import { makePrediction, login } from './api';
+import { makePrediction, login, register } from './api';
 import logo from './assets/TMBA Logo 2020 white transparent.png';
 
 const theme = createTheme({
@@ -29,6 +29,14 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -61,8 +69,25 @@ function App() {
       const loginResponse = await login(credentials);
       setUser(loginResponse.user);
       setIsLoggedIn(true);
+      localStorage.setItem('user', JSON.stringify(loginResponse.user));
     } catch (err) {
       setError('Login failed. Please check your credentials and try again.');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRegister = async (credentials) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const registrationResponse = await register(credentials);
+      setUser(registrationResponse.user);
+      setIsLoggedIn(true);
+      localStorage.setItem('user', JSON.stringify(registrationResponse.user));
+    } catch (err) {
+      setError('Registration failed. Please try again.');
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -74,6 +99,7 @@ function App() {
     setIsLoggedIn(false);
     setResults(null);
     setInputs(null);
+    localStorage.removeItem('user');
   };
 
   return (
@@ -110,7 +136,7 @@ function App() {
             Sales Prediction Tool
           </Typography>
           {!isLoggedIn ? (
-            <LoginForm onLogin={handleLogin} />
+            <LoginForm onLogin={handleLogin} onRegister={handleRegister} />
           ) : (
             <>
               <PredictionForm onSubmit={handleSubmit} />
