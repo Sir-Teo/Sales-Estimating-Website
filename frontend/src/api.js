@@ -17,7 +17,7 @@ export const makePrediction = async (inputData) => {
 
 export const login = async (credentials) => {
   try {
-    const response = await axios.post(`${API_URL}/login/`, credentials);
+    const response = await axios.post(`${API_URL}/auth/login/`, credentials);
     console.log('Login response:', response.data);
     return response.data;
   } catch (error) {

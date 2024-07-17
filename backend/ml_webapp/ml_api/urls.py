@@ -1,4 +1,4 @@
-# src/ml_api/urls.py
+# ml_app/ml_api/urls.py
 
 from django.urls import path
 from .views import PredictionView
