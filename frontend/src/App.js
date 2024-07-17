@@ -33,11 +33,17 @@ function App() {
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
-      setIsLoggedIn(true);
+      try {
+        const parsedUser = JSON.parse(savedUser);
+        setUser(parsedUser);
+        setIsLoggedIn(true);
+      } catch (err) {
+        console.error('Error parsing user from localStorage', err);
+        localStorage.removeItem('user'); // Remove invalid data
+      }
     }
   }, []);
-
+  
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -85,6 +91,7 @@ function App() {
       const registrationResponse = await register(credentials);
       setUser(registrationResponse.user);
       setIsLoggedIn(true);
+      console.log(registrationResponse)
       localStorage.setItem('user', JSON.stringify(registrationResponse.user));
     } catch (err) {
       setError('Registration failed. Please try again.');

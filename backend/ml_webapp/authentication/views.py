@@ -57,4 +57,4 @@ class RegisterView(APIView):
             return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.create_user(username=username, email=email, password=password)
-        return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
+        return Response({'message': 'User created successfully', 'user':UserSerializer(user).data}, status=status.HTTP_201_CREATED)
