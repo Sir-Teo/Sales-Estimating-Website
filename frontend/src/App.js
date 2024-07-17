@@ -1,5 +1,3 @@
-// src/App.js
-
 import React, { useState } from 'react';
 import { Container, Typography, Box, AppBar, Toolbar, IconButton, Menu, MenuItem, CssBaseline, ThemeProvider, createTheme, CircularProgress, Snackbar, Button } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -60,8 +58,8 @@ function App() {
     try {
       setIsLoading(true);
       setError(null);
-      const userData = await login(credentials);
-      setUser(userData);
+      const loginResponse = await login(credentials);
+      setUser(loginResponse.user);
       setIsLoggedIn(true);
     } catch (err) {
       setError('Login failed. Please check your credentials and try again.');
@@ -88,7 +86,7 @@ function App() {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               TMBA Sales Estimation Prediction
             </Typography>
-            {isLoggedIn && (
+            {isLoggedIn && user && (
               <>
                 <Typography variant="body1" sx={{ mr: 2 }}>
                   Welcome, {user.username}
