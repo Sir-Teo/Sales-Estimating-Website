@@ -1,4 +1,4 @@
-#ml_api/ml_model.py
+#src/ml_api/ml_model.py
 
 import joblib
 import pandas as pd
