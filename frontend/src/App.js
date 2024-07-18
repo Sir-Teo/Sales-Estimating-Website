@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Box, CssBaseline, ThemeProvider } from '@mui/material';
 import Header from './components/Header';
 import MainContent from './components/MainContent';
@@ -42,7 +42,7 @@ function App() {
           savedPredictions={savedPredictions}
           onSavedPredictionClick={handleSavedPredictionClick}
           onDeletePrediction={handleDeletePrediction}
-          onSubmit={handleSubmit}
+          onSubmit={(data) => handleSubmit({ ...data, userEmail: user.email })}
           isLoading={isLoading}
           results={results}
           inputs={inputs}

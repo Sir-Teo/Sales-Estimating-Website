@@ -6,9 +6,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { groupsManual, descriptions } from './utils';
 
-const PredictionForm = ({ onSubmit }) => {
+const PredictionForm = ({ onSubmit, userEmail }) => {
   const [formData, setFormData] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [projectName, setProjectName] = useState('');
 
   const handleChange = (index, e) => {
     const newItems = formData.map((item, i) => (
@@ -31,18 +32,32 @@ const PredictionForm = ({ onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = formData.reduce((acc, item) => {
-      acc[item.name] = item.quantity;
-      return acc;
-    }, {});
+    const data = {
+      projectName,
+      inputs: formData.reduce((acc, item) => {
+        acc[item.name] = item.quantity;
+        return acc;
+      }, {}),
+      userEmail
+    };
     onSubmit(data);
     setFormData([]); // Clear the form data
+    setProjectName(''); // Clear the project name
   };
 
   return (
     <Paper sx={{ padding: 3, mt: 3 }}>
       <Typography variant="h6" gutterBottom>Enter Prediction Data</Typography>
       <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <TextField
+            fullWidth
+            label="Project Name"
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
+            required
+          />
+        </Grid>
         <Grid item xs={12} sm={8}>
           <FormControl fullWidth>
             <Autocomplete
@@ -109,7 +124,7 @@ const PredictionForm = ({ onSubmit }) => {
         variant="contained"
         color="primary"
         onClick={handleSubmit}
-        disabled={formData.length === 0 || formData.some(item => !item.quantity)}
+        disabled={formData.length === 0 || formData.some(item => !item.quantity) || !projectName}
         sx={{ mt: 3 }}
         fullWidth
       >
