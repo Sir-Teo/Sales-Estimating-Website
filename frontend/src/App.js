@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Box, AppBar, Toolbar, IconButton, Menu, MenuItem, CssBaseline, ThemeProvider, createTheme, CircularProgress, Snackbar, Button, List, ListItem, ListItemText } from '@mui/material';
+import { Container, Typography, Box, AppBar, Toolbar, Menu, MenuItem, CssBaseline, ThemeProvider, createTheme, CircularProgress, Snackbar, Button, List, ListItem, ListItemText, ListItemSecondaryAction, IconButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import DeleteIcon from '@mui/icons-material/Delete';
 import PredictionForm from './components/PredictionForm';
 import ResultDisplay from './components/ResultDisplay';
 import LoginForm from './components/LoginForm';
-import { makePrediction, login, register, getSavedPredictions } from './api';
+import { makePrediction, login, register, getSavedPredictions, deletePrediction } from './api';
 import logo from './assets/TMBA Logo 2020 white transparent.png';
 
 const theme = createTheme({
@@ -60,6 +61,16 @@ function App() {
       } else {
         setError('Failed to fetch saved predictions');
       }
+    }
+  };
+
+  const handleDeletePrediction = async (id) => {
+    try {
+      await deletePrediction(id);
+      fetchSavedPredictions(); // Refresh saved predictions after deletion
+    } catch (err) {
+      console.error('Error deleting prediction', err);
+      setError('Failed to delete prediction');
     }
   };
 
@@ -187,6 +198,11 @@ function App() {
                           primary={`Prediction ${index + 1}`} 
                           secondary={new Date(prediction.created_at).toLocaleString()} 
                         />
+                        <ListItemSecondaryAction>
+                          <IconButton edge="end" aria-label="delete" onClick={() => handleDeletePrediction(prediction.id)}>
+                            <DeleteIcon />
+                          </IconButton>
+                        </ListItemSecondaryAction>
                       </ListItem>
                     ))}
                   </List>

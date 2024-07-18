@@ -70,3 +70,15 @@ class SavedPredictionsView(APIView):
         saved_predictions = SavedPrediction.objects.filter(user=request.user).order_by('-created_at')
         serializer = SavedPredictionSerializer(saved_predictions, many=True)
         return Response(serializer.data)
+    
+
+class DeletePredictionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, pk, format=None):
+        try:
+            prediction = SavedPrediction.objects.get(pk=pk, user=request.user)
+            prediction.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except SavedPrediction.DoesNotExist:
+            return Response({'error': 'Prediction not found'}, status=status.HTTP_404_NOT_FOUND)

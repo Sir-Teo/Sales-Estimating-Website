@@ -126,3 +126,14 @@ export const getSavedPredictions = async () => {
     throw error;
   }
 };
+
+export const deletePrediction = async (id) => {
+  try {
+    const response = await axiosInstance.delete(`/saved-predictions/${id}/`);
+    console.log('Delete prediction response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting prediction:', error);
+    throw error;
+  }
+};
