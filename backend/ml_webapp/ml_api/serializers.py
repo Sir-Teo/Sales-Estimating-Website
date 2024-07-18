@@ -1,6 +1,7 @@
-# ml_webapp/ml_api/serializers.py
+# ml_app/ml_api/serializers.py
 
 from rest_framework import serializers
+from .models import SavedPrediction
 
 # Define the groups_manual for reference
 groups_manual = {
@@ -55,9 +56,13 @@ class ClosestRowSerializer(serializers.Serializer):
         # Add HO fields
         for i in range(2, 13):
             self.fields[f'HO{i:02d}'] = serializers.FloatField(required=False)
-        
 
 class OutputSerializer(serializers.Serializer):
     rf_predictions = PredictionSerializer()
     xgb_predictions = PredictionSerializer()
     closest_rows = ClosestRowSerializer(many=True)
+
+class SavedPredictionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SavedPrediction
+        fields = ['id', 'input_data', 'rf_predictions', 'xgb_predictions', 'created_at']

@@ -4,16 +4,17 @@ import logging
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import InputSerializer, OutputSerializer
+from rest_framework.permissions import IsAuthenticated
+from .serializers import InputSerializer, OutputSerializer, SavedPredictionSerializer
 from .ml_model import predict
+from .models import SavedPrediction
 from drf_yasg.utils import swagger_auto_schema
-
 
 logger = logging.getLogger(__name__)
 
-
-
 class PredictionView(APIView):
+    permission_classes = [IsAuthenticated]
+
     @swagger_auto_schema(
         request_body=InputSerializer,
         responses={
@@ -37,8 +38,16 @@ class PredictionView(APIView):
                 prediction = {
                     'rf_predictions': rf_predictions,
                     'xgb_predictions': xgb_predictions,
-                    'closest_rows': closest_rows.to_dict(orient='records')  # Convert dataframe to list of dicts
+                    'closest_rows': closest_rows.to_dict(orient='records')
                 }
+
+                # Save the prediction
+                saved_prediction = SavedPrediction.objects.create(
+                    user=request.user,
+                    input_data=input_serializer.validated_data,
+                    rf_predictions=rf_predictions,
+                    xgb_predictions=xgb_predictions
+                )
 
                 output_serializer = OutputSerializer(data=prediction)
                 if output_serializer.is_valid():
@@ -54,3 +63,10 @@ class PredictionView(APIView):
             logger.error(f"Input validation failed: {input_serializer.errors}")
             return Response({'error': 'Bad request', 'details': input_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+class SavedPredictionsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        saved_predictions = SavedPrediction.objects.filter(user=request.user).order_by('-created_at')
+        serializer = SavedPredictionSerializer(saved_predictions, many=True)
+        return Response(serializer.data)

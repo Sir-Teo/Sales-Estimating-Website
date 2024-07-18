@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Box, AppBar, Toolbar, IconButton, Menu, MenuItem, CssBaseline, ThemeProvider, createTheme, CircularProgress, Snackbar, Button } from '@mui/material';
+import { Container, Typography, Box, AppBar, Toolbar, IconButton, Menu, MenuItem, CssBaseline, ThemeProvider, createTheme, CircularProgress, Snackbar, Button, List, ListItem, ListItemText } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import PredictionForm from './components/PredictionForm';
 import ResultDisplay from './components/ResultDisplay';
 import LoginForm from './components/LoginForm';
-import { makePrediction, login, register } from './api';
+import { makePrediction, login, register, getSavedPredictions } from './api';
 import logo from './assets/TMBA Logo 2020 white transparent.png';
 
 const theme = createTheme({
@@ -29,6 +29,9 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [savedPredictions, setSavedPredictions] = useState([]);
+  const [showSavedPredictions, setShowSavedPredictions] = useState(false);
+  const [tokenExpired, setTokenExpired] = useState(false);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
@@ -37,19 +40,27 @@ function App() {
         const parsedUser = JSON.parse(savedUser);
         setUser(parsedUser);
         setIsLoggedIn(true);
+        fetchSavedPredictions();
       } catch (err) {
         console.error('Error parsing user from localStorage', err);
-        localStorage.removeItem('user'); // Remove invalid data
+        localStorage.removeItem('user');
       }
     }
   }, []);
-  
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
+  const fetchSavedPredictions = async () => {
+    try {
+      const predictions = await getSavedPredictions();
+      setSavedPredictions(predictions);
+    } catch (err) {
+      console.error('Error fetching saved predictions', err);
+      if (err.response && err.response.status === 401) {
+        setTokenExpired(true);
+        handleLogout();
+      } else {
+        setError('Failed to fetch saved predictions');
+      }
+    }
   };
 
   const handleSubmit = async (formData) => {
@@ -60,9 +71,14 @@ function App() {
       setInputs(formData);
       const data = await makePrediction(formData);
       setResults(data);
+      fetchSavedPredictions(); // Refresh saved predictions after a new prediction
     } catch (err) {
       setError('An error occurred while making the prediction. Please try again.');
       console.error(err);
+      if (err.response && err.response.status === 401) {
+        setTokenExpired(true);
+        handleLogout();
+      }
     } finally {
       setIsLoading(false);
     }
@@ -76,6 +92,7 @@ function App() {
       setUser(loginResponse.user);
       setIsLoggedIn(true);
       localStorage.setItem('user', JSON.stringify(loginResponse.user));
+      fetchSavedPredictions();
     } catch (err) {
       setError('Login failed. Please check your credentials and try again.');
       console.error(err);
@@ -84,15 +101,15 @@ function App() {
     }
   };
 
-  const handleRegister = async (credentials) => {
+  const handleRegister = async (userData) => {
     try {
       setIsLoading(true);
       setError(null);
-      const registrationResponse = await register(credentials);
+      const registrationResponse = await register(userData);
       setUser(registrationResponse.user);
       setIsLoggedIn(true);
-      console.log(registrationResponse)
       localStorage.setItem('user', JSON.stringify(registrationResponse.user));
+      fetchSavedPredictions();
     } catch (err) {
       setError('Registration failed. Please try again.');
       console.error(err);
@@ -106,7 +123,18 @@ function App() {
     setIsLoggedIn(false);
     setResults(null);
     setInputs(null);
+    setSavedPredictions([]);
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
+  };
+
+  const handleSavedPredictionClick = (prediction) => {
+    setInputs(prediction.input_data);
+    setResults({
+      rf_predictions: prediction.rf_predictions,
+      xgb_predictions: prediction.xgb_predictions,
+    });
+    setShowSavedPredictions(false);
   };
 
   return (
@@ -124,17 +152,20 @@ function App() {
                 <Typography variant="body1" sx={{ mr: 2 }}>
                   Welcome, {user.username}
                 </Typography>
+                <Button color="inherit" onClick={() => setShowSavedPredictions(!showSavedPredictions)}>
+                  {showSavedPredictions ? 'Hide Saved' : 'Show Saved'}
+                </Button>
                 <Button color="inherit" onClick={handleLogout}>
                   Logout
                 </Button>
               </>
             )}
-            <IconButton edge="end" color="inherit" aria-label="menu" onClick={handleMenuClick}>
+            <IconButton edge="end" color="inherit" aria-label="menu" onClick={(event) => setAnchorEl(event.currentTarget)}>
               <MenuIcon />
             </IconButton>
-            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-              <MenuItem onClick={handleMenuClose}>About</MenuItem>
-              <MenuItem onClick={handleMenuClose}>Help</MenuItem>
+            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+              <MenuItem onClick={() => setAnchorEl(null)}>About</MenuItem>
+              <MenuItem onClick={() => setAnchorEl(null)}>Help</MenuItem>
             </Menu>
           </Toolbar>
         </AppBar>
@@ -146,13 +177,31 @@ function App() {
             <LoginForm onLogin={handleLogin} onRegister={handleRegister} />
           ) : (
             <>
-              <PredictionForm onSubmit={handleSubmit} />
-              {isLoading && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                  <CircularProgress role="progressbar" />
+              {showSavedPredictions ? (
+                <Box>
+                  <Typography variant="h5" gutterBottom>Saved Predictions</Typography>
+                  <List>
+                    {savedPredictions.map((prediction, index) => (
+                      <ListItem key={index} button onClick={() => handleSavedPredictionClick(prediction)}>
+                        <ListItemText 
+                          primary={`Prediction ${index + 1}`} 
+                          secondary={new Date(prediction.created_at).toLocaleString()} 
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
                 </Box>
+              ) : (
+                <>
+                  <PredictionForm onSubmit={handleSubmit} />
+                  {isLoading && (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                      <CircularProgress role="progressbar" />
+                    </Box>
+                  )}
+                  {results && <ResultDisplay results={results} inputs={inputs} />}
+                </>
               )}
-              {results && <ResultDisplay results={results} inputs={inputs} />}
             </>
           )}
         </Container>
@@ -165,10 +214,13 @@ function App() {
         </Box>
       </Box>
       <Snackbar
-        open={Boolean(error)}
+        open={Boolean(error) || tokenExpired}
         autoHideDuration={6000}
-        onClose={() => setError(null)}
-        message={error}
+        onClose={() => {
+          setError(null);
+          setTokenExpired(false);
+        }}
+        message={tokenExpired ? 'Your session has expired. Please log in again.' : error}
       />
     </ThemeProvider>
   );
