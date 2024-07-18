@@ -46,7 +46,8 @@ class PredictionView(APIView):
                     user=request.user,
                     input_data=input_serializer.validated_data,
                     rf_predictions=rf_predictions,
-                    xgb_predictions=xgb_predictions
+                    xgb_predictions=xgb_predictions,
+                    closest_rows=closest_rows.to_dict(orient='records')
                 )
 
                 output_serializer = OutputSerializer(data=prediction)
@@ -68,9 +69,18 @@ class SavedPredictionsView(APIView):
 
     def get(self, request, format=None):
         saved_predictions = SavedPrediction.objects.filter(user=request.user).order_by('-created_at')
-        serializer = SavedPredictionSerializer(saved_predictions, many=True)
-        return Response(serializer.data)
-    
+        predictions = []
+        for prediction in saved_predictions:
+            prediction_data = {
+                'id': prediction.id,
+                'input_data': prediction.input_data,
+                'rf_predictions': prediction.rf_predictions,
+                'xgb_predictions': prediction.xgb_predictions,
+                'closest_rows': prediction.closest_rows,
+                'created_at': prediction.created_at
+            }
+            predictions.append(prediction_data)
+        return Response(predictions)
 
 class DeletePredictionView(APIView):
     permission_classes = [IsAuthenticated]

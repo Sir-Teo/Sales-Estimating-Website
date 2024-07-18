@@ -65,4 +65,4 @@ class OutputSerializer(serializers.Serializer):
 class SavedPredictionSerializer(serializers.ModelSerializer):
     class Meta:
         model = SavedPrediction
-        fields = ['id', 'input_data', 'rf_predictions', 'xgb_predictions', 'created_at']
+        fields = ['id', 'input_data', 'rf_predictions', 'xgb_predictions', 'closest_rows', 'created_at']
