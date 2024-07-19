@@ -1,11 +1,11 @@
 # ml_api/models.py
 
 from django.db import models
-from authentication.models import CustomUser
+from django.conf import settings
 
 class SavedPrediction(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    project_name = models.CharField(max_length=100,default='Unknown Project')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    project_name = models.CharField(max_length=255)
     input_data = models.JSONField()
     rf_predictions = models.JSONField()
     xgb_predictions = models.JSONField()
@@ -13,4 +13,4 @@ class SavedPrediction(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Prediction for {self.user.email} at {self.created_at}"
+        return f"{self.project_name} - {self.user.email}"

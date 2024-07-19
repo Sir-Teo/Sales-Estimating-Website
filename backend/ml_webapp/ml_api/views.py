@@ -46,7 +46,7 @@ class PredictionView(APIView):
                     'closest_rows': closest_rows.to_dict(orient='records')
                 }
 
-                # Save the prediction
+                # Save the prediction 
                 saved_prediction = SavedPrediction.objects.create(
                     user=request.user,
                     project_name=project_name,

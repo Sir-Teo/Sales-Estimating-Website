@@ -62,7 +62,8 @@ class OutputSerializer(serializers.Serializer):
     closest_rows = ClosestRowSerializer(many=True)
 
 class SavedPredictionSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(source='user.email', read_only=True)
     class Meta:
         model = SavedPrediction
-        fields = ['id', 'project_name', 'input_data', 'rf_predictions', 'xgb_predictions', 'closest_rows', 'created_at']
-        read_only_fields = ['id', 'created_at']
+        fields = ['id', 'email', 'project_name', 'input_data', 'rf_predictions', 'xgb_predictions', 'closest_rows', 'created_at']
+        read_only_fields = ['id', 'email', 'created_at']
