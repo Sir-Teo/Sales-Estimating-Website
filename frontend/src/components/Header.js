@@ -5,6 +5,9 @@ import logo from '../assets/TMBA Logo 2020 white transparent.png';
 
 function Header({ isLoggedIn, user, onLogout, showSavedPredictions, setShowSavedPredictions }) {
   const [anchorEl, setAnchorEl] = useState(null);
+  
+  // Extract the part of the user's email before the '@' symbol
+  const userName = user ? user.split('@')[0] : '';
 
   return (
     <AppBar position="static">
@@ -16,7 +19,7 @@ function Header({ isLoggedIn, user, onLogout, showSavedPredictions, setShowSaved
         {isLoggedIn && user && (
           <>
             <Typography variant="body1" sx={{ mr: 2 }}>
-              Welcome, {user.username}
+              Welcome, {userName}
             </Typography>
             <Button 
               color="inherit" 
