@@ -1,24 +1,56 @@
 import React from 'react';
-import { Typography, Card, CardContent, List, ListItem, ListItemText, ListSubheader } from '@mui/material';
+import { Typography, Card, CardContent, List, ListItem, ListItemText, ListSubheader, Grid, CardActions, Button } from '@mui/material';
 
-const InputInformation = ({ inputs, descriptions }) => (
-  <Card elevation={4} sx={{ height: '100%' }}>
-    <CardContent>
-      <Typography variant="h6" gutterBottom>
-        Input Information
-      </Typography>
-      <List subheader={<ListSubheader>Items and Quantities</ListSubheader>}>
-        {Object.entries(inputs).map(([name, quantity]) => (
-          <ListItem key={name}>
-            <ListItemText 
-              primary={`${name} - ${descriptions[name]}`} 
-              secondary={`Quantity: ${quantity}`} 
-            />
-          </ListItem>
-        ))}
-      </List>
-    </CardContent>
-  </Card>
-);
+const InputInformation = ({ inputs }) => {
+  const projectDetails = ['project_name', 'userEmail'];
+
+  const renderInputItems = (items) => {
+    return Object.entries(items).map(([key, value]) => (
+      <ListItem key={key} sx={{ borderBottom: '1px solid #e0e0e0' }}>
+        <ListItemText 
+          primary={key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+          secondary={`Quantity: ${value}`}
+        />
+      </ListItem>
+    ));
+  };
+
+  return (
+    <Card elevation={4} sx={{ height: '100%' }}>
+      <CardContent>
+        <Typography variant="h5" gutterBottom sx={{pb: 1 }}>
+          Input Information
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <List
+              subheader={<ListSubheader sx={{ bgcolor: 'transparent', fontSize: '1.2em', fontWeight: 'bold' }}>Project Details</ListSubheader>}
+            >
+              {projectDetails.map((detail) => (
+                <ListItem key={detail} sx={{ borderBottom: '1px solid #e0e0e0' }}>
+                  <ListItemText 
+                    primary={detail.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    secondary={inputs[detail]}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <List
+              subheader={<ListSubheader sx={{ bgcolor: 'transparent', fontSize: '1.2em', fontWeight: 'bold' }}>Items and Quantities</ListSubheader>}
+            >
+              {inputs.inputs && typeof inputs.inputs === 'object' 
+                ? renderInputItems(inputs.inputs)
+                : <ListItem><ListItemText primary="No items found" /></ListItem>
+              }
+            </List>
+          </Grid>
+        </Grid>
+      </CardContent>
+
+    </Card>
+  );
+};
 
 export default InputInformation;
