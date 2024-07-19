@@ -3,8 +3,6 @@ import { Typography, Card, CardContent, Table, TableBody, TableCell, TableContai
 
 const ClosestRows = ({ closest_rows, descriptions }) => {
   useEffect(() => {
-    console.log('descriptions:', descriptions);
-    console.log('closest_rows:', closest_rows);
   }, [descriptions, closest_rows]);
 
   const getTooltipContent = (key, value, row) => {
