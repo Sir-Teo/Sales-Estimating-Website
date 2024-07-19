@@ -16,7 +16,8 @@ function MainContent({
   onSubmit,
   isLoading,
   results,
-  inputs
+  inputs,
+  userEmail  // Add userEmail to the props
 }) {
   return (
     <Container component="main" maxWidth="lg" sx={{ mt: 4, mb: 4, flexGrow: 1 }}>
@@ -35,7 +36,7 @@ function MainContent({
             />
           ) : (
             <>
-              <PredictionForm onSubmit={onSubmit} />
+              <PredictionForm onSubmit={onSubmit} userEmail={userEmail} />  {/* Pass userEmail here */}
               {isLoading && (
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                   <CircularProgress role="progressbar" />

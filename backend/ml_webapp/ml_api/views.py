@@ -1,10 +1,11 @@
-# ml_app/ml_api/views.py
+# ml_webapp/ml_api/views.py
 
 import logging
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 from .serializers import InputSerializer, OutputSerializer, SavedPredictionSerializer
 from .ml_model import predict
 from .models import SavedPrediction
@@ -29,7 +30,11 @@ class PredictionView(APIView):
         input_serializer = InputSerializer(data=request.data)
         if input_serializer.is_valid():
             try:
-                prediction_results = predict(input_serializer.validated_data)
+                validated_data = input_serializer.validated_data
+                project_name = validated_data.pop('project_name')
+                user_email = request.user.email  # Get email from the authenticated user
+
+                prediction_results = predict(validated_data)
                 
                 rf_predictions = prediction_results['Random Forest']
                 xgb_predictions = prediction_results['XGBoost']
@@ -44,7 +49,8 @@ class PredictionView(APIView):
                 # Save the prediction
                 saved_prediction = SavedPrediction.objects.create(
                     user=request.user,
-                    input_data=input_serializer.validated_data,
+                    project_name=project_name,
+                    input_data=validated_data,
                     rf_predictions=rf_predictions,
                     xgb_predictions=xgb_predictions,
                     closest_rows=closest_rows.to_dict(orient='records')
@@ -63,24 +69,26 @@ class PredictionView(APIView):
         else:
             logger.error(f"Input validation failed: {input_serializer.errors}")
             return Response({'error': 'Bad request', 'details': input_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+    
+class SavedPredictionsPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
 class SavedPredictionsView(APIView):
     permission_classes = [IsAuthenticated]
+    pagination_class = SavedPredictionsPagination
 
     def get(self, request, format=None):
         saved_predictions = SavedPrediction.objects.filter(user=request.user).order_by('-created_at')
-        predictions = []
-        for prediction in saved_predictions:
-            prediction_data = {
-                'id': prediction.id,
-                'input_data': prediction.input_data,
-                'rf_predictions': prediction.rf_predictions,
-                'xgb_predictions': prediction.xgb_predictions,
-                'closest_rows': prediction.closest_rows,
-                'created_at': prediction.created_at
-            }
-            predictions.append(prediction_data)
-        return Response(predictions)
+        
+        paginator = self.pagination_class()
+        paginated_predictions = paginator.paginate_queryset(saved_predictions, request)
+        
+        serializer = SavedPredictionSerializer(paginated_predictions, many=True)
+        
+        return paginator.get_paginated_response(serializer.data)
 
 class DeletePredictionView(APIView):
     permission_classes = [IsAuthenticated]

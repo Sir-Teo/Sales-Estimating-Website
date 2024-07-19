@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode'; // Correct import
 
 const API_URL = 'http://localhost:8000/api';
 
@@ -19,6 +19,7 @@ const clearTokens = () => {
 const isTokenExpired = (token) => {
   const decodedToken = jwtDecode(token);
   const currentTime = Date.now() / 1000;
+  console.log('Token expiration:', decodedToken.exp, 'Current time:', currentTime);
   return decodedToken.exp < currentTime;
 };
 
@@ -32,6 +33,7 @@ const refreshAccessToken = async () => {
     const response = await axios.post(`${API_URL}/token/refresh/`, { refresh: refreshToken });
     const { access } = response.data;
     localStorage.setItem('access', access);
+    console.log('Refreshed access token:', access);
     return access;
   } catch (error) {
     console.error('Error refreshing access token:', error);
@@ -53,6 +55,8 @@ axiosInstance.interceptors.request.use(
     if (accessToken) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
+    config.headers['Content-Type'] = 'application/json'; // Ensure Content-Type is set
+    console.log('Request headers:', config.headers);
     return config;
   },
   (error) => Promise.reject(error)
@@ -75,39 +79,53 @@ axiosInstance.interceptors.response.use(
 
 export const makePrediction = async (inputData) => {
   try {
-    const response = await axiosInstance.post('/predict/', inputData);
+    const userEmail = localStorage.getItem('userEmail'); // Adjust according to your app's structure
+    const payload = {
+      project_name: inputData.project_name,
+      inputs: inputData.inputs,
+      email: userEmail // Include userEmail if required by the backend
+    };
+
+    console.log('Prediction request payload:', payload);
+    const response = await axiosInstance.post('/predict/', payload);
     console.log('Prediction response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error making prediction:', error);
+    if (error.response) {
+      console.error('Error making prediction:', error.response.data);
+    } else {
+      console.error('Error making prediction:', error.message);
+    }
     throw error;
   }
 };
 
 export const login = async (credentials) => {
   try {
-    const response = await axiosInstance.post('/auth/login/', credentials);
+    const response = await axiosInstance.post('/auth/login/', { email: credentials.email, password: credentials.password });
     console.log('Login response:', response.data);
     if (response.data.access && response.data.refresh) {
       setTokens(response.data.access, response.data.refresh);
+      localStorage.setItem('userEmail', credentials.email); // Store userEmail if needed
     }
     return response.data;
   } catch (error) {
-    console.error('Error logging in:', error);
+    console.error('Error logging in:', error.response ? error.response.data : error.message);
     throw error;
   }
 };
 
 export const register = async (userData) => {
   try {
-    const response = await axiosInstance.post('/auth/register/', userData);
+    const response = await axiosInstance.post('/auth/register/', { email: userData.email, password: userData.password });
     console.log('Registration response:', response.data);
     if (response.data.access && response.data.refresh) {
       setTokens(response.data.access, response.data.refresh);
+      localStorage.setItem('userEmail', userData.email); // Store userEmail if needed
     }
     return response.data;
   } catch (error) {
-    console.error('Error registering:', error);
+    console.error('Error registering:', error.response ? error.response.data : error.message);
     throw error;
   }
 };
@@ -121,7 +139,7 @@ export const getSavedPredictions = async () => {
     if (error.response && error.response.status === 401) {
       console.error('Unauthorized. Please check your credentials.');
     } else {
-      console.error('Error fetching saved predictions:', error);
+      console.error('Error fetching saved predictions:', error.response ? error.response.data : error.message);
     }
     throw error;
   }
@@ -133,7 +151,7 @@ export const deletePrediction = async (id) => {
     console.log('Delete prediction response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error deleting prediction:', error);
+    console.error('Error deleting prediction:', error.response ? error.response.data : error.message);
     throw error;
   }
 };

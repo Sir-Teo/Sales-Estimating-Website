@@ -33,13 +33,14 @@ const PredictionForm = ({ onSubmit, userEmail }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = {
-      projectName,
+      email: userEmail,
+      project_name: projectName,
       inputs: formData.reduce((acc, item) => {
         acc[item.name] = item.quantity;
         return acc;
       }, {}),
-      userEmail
     };
+    console.log(data);
     onSubmit(data);
     setFormData([]); // Clear the form data
     setProjectName(''); // Clear the project name

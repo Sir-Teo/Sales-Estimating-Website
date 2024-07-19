@@ -1,5 +1,3 @@
-# ml_app/ml_api/serializers.py
-
 from rest_framework import serializers
 from .models import SavedPrediction
 
@@ -20,10 +18,11 @@ all_codes = [code for group in groups_manual.values() for code in group]
 # Define the input fields as optional with default value 0
 input_fields = {code: serializers.IntegerField(min_value=0, required=False, default=0) for code in all_codes}
 
-# Dynamically create the InputSerializer class
 class InputSerializer(serializers.Serializer):
-    pass
+    project_name = serializers.CharField(max_length=255, required=True)
+    email = serializers.EmailField(required=True)  # Add user_email field
 
+# Dynamically add the input fields to the InputSerializer class
 for field_name, field_instance in input_fields.items():
     InputSerializer._declared_fields[field_name] = field_instance
 
@@ -65,4 +64,5 @@ class OutputSerializer(serializers.Serializer):
 class SavedPredictionSerializer(serializers.ModelSerializer):
     class Meta:
         model = SavedPrediction
-        fields = ['id', 'input_data', 'rf_predictions', 'xgb_predictions', 'closest_rows', 'created_at']
+        fields = ['id', 'project_name', 'input_data', 'rf_predictions', 'xgb_predictions', 'closest_rows', 'created_at']
+        read_only_fields = ['id', 'created_at']

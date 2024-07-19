@@ -3,7 +3,6 @@ import { TextField, Button, Box, Typography, Link } from '@mui/material';
 
 const LoginForm = ({ onLogin, onRegister }) => {
   const [isLogin, setIsLogin] = useState(true);
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -14,13 +13,13 @@ const LoginForm = ({ onLogin, onRegister }) => {
     setError('');
 
     if (isLogin) {
-      if (!username || !email || !password) {
-        setError('Please enter username, email, and password');
+      if (!email || !password) {
+        setError('Please enter email and password');
         return;
       }
-      onLogin({ username, email, password });
+      onLogin({ email, password });
     } else {
-      if (!username || !email || !password || !confirmPassword) {
+      if (!email || !password || !confirmPassword) {
         setError('Please fill in all fields');
         return;
       }
@@ -28,7 +27,7 @@ const LoginForm = ({ onLogin, onRegister }) => {
         setError('Passwords do not match');
         return;
       }
-      onRegister({ username, email, password });
+      onRegister({ email, password });
     }
   };
 
@@ -36,7 +35,6 @@ const LoginForm = ({ onLogin, onRegister }) => {
     setIsLogin(!isLogin);
     setError('');
     // Clear all fields when switching modes
-    setUsername('');
     setEmail('');
     setPassword('');
     setConfirmPassword('');
@@ -48,18 +46,6 @@ const LoginForm = ({ onLogin, onRegister }) => {
         margin="normal"
         required
         fullWidth
-        id="username"
-        label="Username"
-        name="username"
-        autoComplete="username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        autoFocus
-      />
-      <TextField
-        margin="normal"
-        required
-        fullWidth
         id="email"
         label="Email Address"
         name="email"
@@ -67,6 +53,7 @@ const LoginForm = ({ onLogin, onRegister }) => {
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        autoFocus
       />
       <TextField
         margin="normal"
@@ -108,7 +95,7 @@ const LoginForm = ({ onLogin, onRegister }) => {
       </Button>
       <Link
         component="button"
-        variant="body2"
+        variant="button"
         onClick={toggleMode}
         sx={{ display: 'block', textAlign: 'center' }}
       >

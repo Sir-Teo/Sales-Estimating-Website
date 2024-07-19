@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'ml_api',
     'corsheaders',
     'drf_yasg',
+    'authentication',  # Add this line
 ]
 
 MIDDLEWARE = [
@@ -137,5 +138,8 @@ SWAGGER_SETTINGS = {
       }
    }
 }
+
+AUTH_USER_MODEL = 'authentication.CustomUser'
+
 
 CORS_ALLOW_ALL_ORIGINS = True # Only use this for development

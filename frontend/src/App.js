@@ -9,7 +9,7 @@ import { useAuth } from './hooks/useAuth';
 import { usePredictions } from './hooks/usePredictions';
 
 function App() {
-  const { isLoggedIn, user, login, register, logout } = useAuth();
+  const { isLoggedIn, user, email, login, register, logout } = useAuth();
   const { 
     results, 
     inputs, 
@@ -42,10 +42,11 @@ function App() {
           savedPredictions={savedPredictions}
           onSavedPredictionClick={handleSavedPredictionClick}
           onDeletePrediction={handleDeletePrediction}
-          onSubmit={(data) => handleSubmit({ ...data, userEmail: user.email })}
+          onSubmit={(data) => handleSubmit({ ...data, userEmail: email })}
           isLoading={isLoading}
           results={results}
           inputs={inputs}
+          userEmail={email}  // Pass userEmail here
         />
         <Footer />
       </Box>

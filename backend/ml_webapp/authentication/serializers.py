@@ -1,13 +1,22 @@
-# authentication/serializers.py
+# ml_webapp/authentication/serializers.py
+
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from .models import CustomUser
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ('id', 'username', 'email')
+        model = CustomUser
+        fields = ('id', 'email')
 
 class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    email = serializers.CharField()
+    email = serializers.EmailField()
     password = serializers.CharField()
+
+class RegisterSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
+
+    def validate_email(self, value):
+        if not value.endswith('.com'):
+            raise serializers.ValidationError("Email must end with .com")
+        return value
