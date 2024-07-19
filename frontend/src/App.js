@@ -1,3 +1,4 @@
+// App.js
 import React from 'react';
 import { Box, CssBaseline, ThemeProvider } from '@mui/material';
 import Header from './components/Header';
@@ -9,7 +10,7 @@ import { useAuth } from './hooks/useAuth';
 import { usePredictions } from './hooks/usePredictions';
 
 function App() {
-  const { isLoggedIn, user, email, login, register, logout } = useAuth();
+  const { isLoggedIn, user, login, register, logout } = useAuth();
   const { 
     results, 
     inputs, 
@@ -42,11 +43,11 @@ function App() {
           savedPredictions={savedPredictions}
           onSavedPredictionClick={handleSavedPredictionClick}
           onDeletePrediction={handleDeletePrediction}
-          onSubmit={(data) => handleSubmit({ ...data, userEmail: email })}
+          onSubmit={(data) => handleSubmit({ ...data, userEmail: user })}
           isLoading={isLoading}
           results={results}
           inputs={inputs}
-          userEmail={email}  // Pass userEmail here
+          userEmail={user}
         />
         <Footer />
       </Box>

@@ -1,3 +1,4 @@
+// useAuth.js
 import { useState, useEffect } from 'react';
 import { login as apiLogin, register as apiRegister } from '../api';
 
@@ -6,20 +7,22 @@ export function useAuth() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      // You might want to validate the token with the server here
+    const token = localStorage.getItem('access'); // Change 'token' to 'access'
+    const userEmail = localStorage.getItem('userEmail');
+    if (token && userEmail) {
       setIsLoggedIn(true);
-      // Fetch user data if needed
+      setUser(userEmail);
     }
   }, []);
 
   const login = async (credentials) => {
     try {
-      const response = await apiLogin({ email: credentials.email, password: credentials.password });
-      localStorage.setItem('token', response.access);
+      const response = await apiLogin(credentials);
+      localStorage.setItem('access', response.access);
+      localStorage.setItem('refresh', response.refresh);
+      localStorage.setItem('userEmail', credentials.email);
       setIsLoggedIn(true);
-      setUser(response.user.email);
+      setUser(credentials.email);
     } catch (err) {
       throw new Error('Login failed. Please check your credentials and try again.');
     }
@@ -27,17 +30,21 @@ export function useAuth() {
 
   const register = async (userData) => {
     try {
-      const response = await apiRegister({ email: userData.email, password: userData.password });
-      localStorage.setItem('token', response.access);
+      const response = await apiRegister(userData);
+      localStorage.setItem('access', response.access);
+      localStorage.setItem('refresh', response.refresh);
+      localStorage.setItem('userEmail', userData.email);
       setIsLoggedIn(true);
-      setUser(response.user.email);
+      setUser(userData.email);
     } catch (err) {
       throw new Error('Registration failed. Please try again.');
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('access');
+    localStorage.removeItem('refresh');
+    localStorage.removeItem('userEmail');
     setIsLoggedIn(false);
     setUser(null);
   };
