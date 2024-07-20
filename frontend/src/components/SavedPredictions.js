@@ -30,7 +30,7 @@ const SavedPredictions = ({ predictions, onPredictionClick, onDeletePrediction }
         {predictions.results.map((prediction, index) => (
           <ListItem key={prediction.id || index} divider={index < predictions.results.length - 1}>
             <ListItemText
-              primary={`Prediction: ${prediction.project_name}`}
+              primary={'Prediction: ' + prediction.project_name}
               secondary={
                 <Box component="span" className="flex flex-col">
                   <Typography variant="body2" color="text.secondary">

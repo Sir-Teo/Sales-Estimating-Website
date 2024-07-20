@@ -43,7 +43,14 @@ export function usePredictions(isLoggedIn) {
   };
 
   const handleSavedPredictionClick = (prediction) => {
-    setInputs(prediction.input_data);
+    // Format the inputs to match the structure expected by InputInformation
+    const formattedInputs = {
+      project_name: prediction.project_name,
+      userEmail: prediction.email,
+      inputs: prediction.input_data
+    };
+    setInputs(formattedInputs);
+    
     setResults({
       rf_predictions: prediction.rf_predictions,
       xgb_predictions: prediction.xgb_predictions,
