@@ -25,16 +25,15 @@ class PredictionView(APIView):
         }
     )
     def post(self, request, format=None):
-        logger.info(f"Received prediction request: {request.data}")
-        
         input_serializer = InputSerializer(data=request.data)
         if input_serializer.is_valid():
             try:
                 validated_data = input_serializer.validated_data
+                print(validated_data)
                 project_name = validated_data.pop('project_name')
-                user_email = request.user.email  # Get email from the authenticated user
-
-                prediction_results = predict(validated_data)
+                email = validated_data.pop('email')
+                inputs = validated_data.pop('inputs')
+                prediction_results = predict(inputs)
                 
                 rf_predictions = prediction_results['Random Forest']
                 xgb_predictions = prediction_results['XGBoost']
@@ -50,7 +49,7 @@ class PredictionView(APIView):
                 saved_prediction = SavedPrediction.objects.create(
                     user=request.user,
                     project_name=project_name,
-                    input_data=validated_data,
+                    input_data=inputs,
                     rf_predictions=rf_predictions,
                     xgb_predictions=xgb_predictions,
                     closest_rows=closest_rows.to_dict(orient='records')

@@ -15,16 +15,10 @@ groups_manual = {
 # Flatten the dictionary into a list of codes
 all_codes = [code for group in groups_manual.values() for code in group]
 
-# Define the input fields as optional with default value 0
-input_fields = {code: serializers.IntegerField(min_value=0, required=False, default=0) for code in all_codes}
-
 class InputSerializer(serializers.Serializer):
     project_name = serializers.CharField(max_length=255, required=True)
     email = serializers.EmailField(required=True)  # Add user_email field
-
-# Dynamically add the input fields to the InputSerializer class
-for field_name, field_instance in input_fields.items():
-    InputSerializer._declared_fields[field_name] = field_instance
+    inputs = serializers.DictField(child=serializers.IntegerField(min_value=0, required=False, default=0))
 
 # Define the output fields
 class PredictionSerializer(serializers.Serializer):
