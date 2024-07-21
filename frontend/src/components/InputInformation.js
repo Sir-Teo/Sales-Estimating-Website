@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Card, CardContent, List, ListItem, ListItemText, ListSubheader, Grid, CardActions, Button } from '@mui/material';
+import { Typography, Card, CardContent, List, ListItem, ListItemText, ListSubheader, Grid } from '@mui/material';
 
 const InputInformation = ({ inputs }) => {
   const projectDetails = ['project_name', 'userEmail'];
@@ -15,10 +15,17 @@ const InputInformation = ({ inputs }) => {
     ));
   };
 
+  const formatLabel = (label) => {
+    if (label === 'userEmail') {
+      return 'User Email';
+    }
+    return label.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+  };
+
   return (
     <Card elevation={4} sx={{ height: '100%' }}>
       <CardContent>
-        <Typography variant="h5" gutterBottom sx={{pb: 1 }}>
+        <Typography variant="h5" gutterBottom sx={{ borderBottom: '1px solid #e0e0e0 ', pb: 1 }}>
           Input Information
         </Typography>
         <Grid container spacing={2}>
@@ -29,7 +36,7 @@ const InputInformation = ({ inputs }) => {
               {projectDetails.map((detail) => (
                 <ListItem key={detail} sx={{ borderBottom: '1px solid #e0e0e0' }}>
                   <ListItemText 
-                    primary={detail.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    primary={formatLabel(detail)}
                     secondary={inputs[detail]}
                   />
                 </ListItem>
@@ -48,7 +55,6 @@ const InputInformation = ({ inputs }) => {
           </Grid>
         </Grid>
       </CardContent>
-
     </Card>
   );
 };

@@ -47,7 +47,7 @@ export function usePredictions(isLoggedIn) {
     const formattedInputs = {
       project_name: prediction.project_name,
       userEmail: prediction.email,
-      inputs: prediction.input_data
+      inputs: prediction.filtered_input_data
     };
     setInputs(formattedInputs);
     

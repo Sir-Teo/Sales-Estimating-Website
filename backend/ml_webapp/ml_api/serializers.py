@@ -57,7 +57,14 @@ class OutputSerializer(serializers.Serializer):
 
 class SavedPredictionSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email', read_only=True)
+    filtered_input_data = serializers.SerializerMethodField()
+
     class Meta:
         model = SavedPrediction
-        fields = ['id', 'email', 'project_name', 'input_data', 'rf_predictions', 'xgb_predictions', 'closest_rows', 'created_at']
+        fields = ['id', 'email', 'project_name', 'filtered_input_data', 'rf_predictions', 'xgb_predictions', 'closest_rows', 'created_at']
         read_only_fields = ['id', 'email', 'created_at']
+
+    def get_filtered_input_data(self, obj):
+        if isinstance(obj.input_data, dict):
+            return {k: v for k, v in obj.input_data.items() if v != 0}
+        return obj.input_data
