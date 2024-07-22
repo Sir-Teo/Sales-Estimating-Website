@@ -16,4 +16,7 @@ jobs:
           heroku_app_name: "sales-estimating" #Must be unique in Heroku
           heroku_email: "zengwc.teo2016@outlook.com"
           usedocker: true
-          
+          docker_build_args: |
+            NODE_ENV
+        env:
+          NODE_ENV: production
