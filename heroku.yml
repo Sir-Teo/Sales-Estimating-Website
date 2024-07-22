@@ -17,5 +17,5 @@ build:
 #   image: web
 
 run:
-  web: gunicorn app:app --bind 0.0.0.0:$PORT
+  web: python manage.py runserver 0.0.0.0:$PORT
   worker: nginx -g 'daemon off;'
