@@ -17,5 +17,5 @@ build:
 #   image: web
 
 run:
-  web: python manage.py runserver 0.0.0.0:$PORT
+  web: /bin/bash -c "export ALLOWED_HOSTS=$(echo $HEROKU_APP_NAME.herokuapp.com) && python manage.py runserver 0.0.0.0:$PORT"
   worker: nginx -g 'daemon off;'
