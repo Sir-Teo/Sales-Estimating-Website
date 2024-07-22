@@ -1,6 +1,6 @@
 setup:
   addons:
-    - plan: heroku-postgresql
+    - plan: heroku-postgresql:essential-0
       as: DATABASE
   config:
     DATABASE_URL: ${DATABASE_URL}
@@ -10,10 +10,11 @@ build:
     web: backend.Dockerfile
     worker: frontend.Dockerfile
 
-release:
-  command:
-    - ./deployment-tasks.sh
-  image: web
+# Commenting out the release section for now
+# release:
+#   command:
+#     - ./deployment-tasks.sh
+#   image: web
 
 run:
   web: gunicorn app:app --bind 0.0.0.0:$PORT
