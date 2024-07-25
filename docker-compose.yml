@@ -4,9 +4,9 @@ services:
   db:
     image: postgres:latest
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: test_db
     ports:
       - "5432:5432"
     volumes:
@@ -28,6 +28,12 @@ services:
         condition: service_healthy
     environment:
       - DATABASE_URL=postgres://test_user:test_password@db:5432/test_db
+      - DEBUG=True
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   frontend:
     build:
@@ -37,6 +43,8 @@ services:
       - "80:80"
     depends_on:
       - backend
-
-# only for heroku
-CMD
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5

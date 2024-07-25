@@ -143,3 +143,4 @@ AUTH_USER_MODEL = 'authentication.CustomUser'
 
 
 CORS_ALLOW_ALL_ORIGINS = True # Only use this for development
+DEBUG = True

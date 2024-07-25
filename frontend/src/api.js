@@ -56,7 +56,6 @@ axiosInstance.interceptors.request.use(
       config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
     config.headers['Content-Type'] = 'application/json'; // Ensure Content-Type is set
-    console.log('Request headers:', config.headers);
     return config;
   },
   (error) => Promise.reject(error)
