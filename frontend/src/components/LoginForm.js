@@ -1,14 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, Typography, Link } from '@mui/material';
 
-const LoginForm = ({ onLogin, onRegister }) => {
+const LoginForm = ({ onLogin, onRegister, forceLoginMode }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    if (forceLoginMode) {
+      setIsLogin(true);
+      setError('');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+    }
+  }, [forceLoginMode]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -17,7 +27,11 @@ const LoginForm = ({ onLogin, onRegister }) => {
         setError('Please enter email and password');
         return;
       }
-      onLogin({ email, password });
+      try {
+        await onLogin({ email, password });
+      } catch (err) {
+        setError(err.message);
+      }
     } else {
       if (!email || !password || !confirmPassword) {
         setError('Please fill in all fields');
@@ -27,14 +41,17 @@ const LoginForm = ({ onLogin, onRegister }) => {
         setError('Passwords do not match');
         return;
       }
-      onRegister({ email, password });
+      try {
+        await onRegister({ email, password });
+      } catch (err) {
+        setError(err.message);
+      }
     }
   };
 
   const toggleMode = () => {
     setIsLogin(!isLogin);
     setError('');
-    // Clear all fields when switching modes
     setEmail('');
     setPassword('');
     setConfirmPassword('');
