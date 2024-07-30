@@ -1,12 +1,18 @@
+// App.js
 import React, { useState } from 'react';
-import { Box, CssBaseline, ThemeProvider, Snackbar, Alert } from '@mui/material';
+import { ThemeProvider, createTheme, CssBaseline, Box, Container, Snackbar, Alert } from '@mui/material';
 import Header from './components/Header';
+import AboutPage from './components/AboutPage';
+import HelpPage from './components/HelpPage';
 import MainContent from './components/MainContent';
 import Footer from './components/Footer';
 import ErrorSnackbar from './components/ErrorSnackbar';
-import { theme } from './theme';
 import { useAuth } from './hooks/useAuth';
 import { usePredictions } from './hooks/usePredictions';
+
+const theme = createTheme({
+  // You can customize your theme here
+});
 
 function App() {
   const { isLoggedIn, user, login, register, logout } = useAuth();
@@ -23,9 +29,14 @@ function App() {
     handleDeletePrediction
   } = usePredictions(isLoggedIn);
 
+  const [currentPage, setCurrentPage] = useState('main');
   const [registrationMessage, setRegistrationMessage] = useState(null);
   const [registrationError, setRegistrationError] = useState(null);
   const [forceLoginMode, setForceLoginMode] = useState(false);
+
+  const handleNavigate = (page) => {
+    setCurrentPage(page);
+  };
 
   const handleRegister = async (userData) => {
     try {
@@ -50,29 +61,36 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ flexGrow: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Header 
           isLoggedIn={isLoggedIn} 
           user={user} 
           onLogout={logout}
           showSavedPredictions={showSavedPredictions}
           setShowSavedPredictions={setShowSavedPredictions}
+          onNavigate={handleNavigate}
         />
-        <MainContent 
-          isLoggedIn={isLoggedIn}
-          onLogin={login}
-          onRegister={handleRegister}
-          showSavedPredictions={showSavedPredictions}
-          savedPredictions={savedPredictions}
-          onSavedPredictionClick={handleSavedPredictionClick}
-          onDeletePrediction={handleDeletePrediction}
-          onSubmit={(data) => handleSubmit({ ...data, userEmail: user })}
-          isLoading={isLoading}
-          results={results}
-          inputs={inputs}
-          userEmail={user}
-          forceLoginMode={forceLoginMode}
-        />
+        <Container component="main" sx={{ mt: 4, mb: 4, flex: 1 }}>
+          {currentPage === 'main' && (
+            <MainContent 
+              isLoggedIn={isLoggedIn}
+              onLogin={login}
+              onRegister={handleRegister}
+              showSavedPredictions={showSavedPredictions}
+              savedPredictions={savedPredictions}
+              onSavedPredictionClick={handleSavedPredictionClick}
+              onDeletePrediction={handleDeletePrediction}
+              onSubmit={(data) => handleSubmit({ ...data, userEmail: user })}
+              isLoading={isLoading}
+              results={results}
+              inputs={inputs}
+              userEmail={user}
+              forceLoginMode={forceLoginMode}
+            />
+          )}
+          {currentPage === 'about' && <AboutPage />}
+          {currentPage === 'help' && <HelpPage />}
+        </Container>
         <Footer />
       </Box>
       <ErrorSnackbar error={error} />

@@ -1,21 +1,35 @@
+// components/Header.js
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 import logo from '../assets/TMBA Logo 2020 white transparent.png';
+import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, Box } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 
-function Header({ isLoggedIn, user, onLogout, showSavedPredictions, setShowSavedPredictions }) {
+function Header({ isLoggedIn, user, onLogout, showSavedPredictions, setShowSavedPredictions, onNavigate }) {
   const [anchorEl, setAnchorEl] = useState(null);
   
-  // Extract the part of the user's email before the '@' symbol
   const userName = user ? user.split('@')[0] : '';
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleMenuItemClick = (page) => {
+    onNavigate(page);
+    handleMenuClose();
+  };
 
   return (
     <AppBar position="static">
       <Toolbar>
-        <img src={logo} alt="Company Logo" style={{ height: 48, marginRight: 16 }} />
+        <Box component="img" src={logo} alt="Company Logo" sx={{ height: 48, marginRight: 2 }} />
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           TMBA Sales Estimation Prediction
         </Typography>
+        <Button color="inherit" onClick={() => handleMenuItemClick('main')}>Home</Button>
         {isLoggedIn && user && (
           <>
             <Typography variant="body1" sx={{ mr: 2 }}>
@@ -32,21 +46,21 @@ function Header({ isLoggedIn, user, onLogout, showSavedPredictions, setShowSaved
             </Button>
           </>
         )}
-        <IconButton 
-          edge="end" 
-          color="inherit" 
-          aria-label="menu" 
-          onClick={(event) => setAnchorEl(event.currentTarget)}
+        <IconButton
+          edge="end"
+          color="inherit"
+          aria-label="menu"
+          onClick={handleMenuOpen}
         >
           <MenuIcon />
         </IconButton>
-        <Menu 
-          anchorEl={anchorEl} 
-          open={Boolean(anchorEl)} 
-          onClose={() => setAnchorEl(null)}
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
         >
-          <MenuItem onClick={() => setAnchorEl(null)}>About</MenuItem>
-          <MenuItem onClick={() => setAnchorEl(null)}>Help</MenuItem>
+          <MenuItem onClick={() => handleMenuItemClick('about')}>About</MenuItem>
+          <MenuItem onClick={() => handleMenuItemClick('help')}>Help</MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>
