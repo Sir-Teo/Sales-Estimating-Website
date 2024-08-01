@@ -78,11 +78,11 @@ axiosInstance.interceptors.response.use(
 
 export const makePrediction = async (inputData) => {
   try {
-    const userEmail = localStorage.getItem('userEmail'); // Adjust according to your app's structure
+    const userEmail = localStorage.getItem('userEmail');
     const payload = {
       project_name: inputData.project_name,
       inputs: inputData.inputs,
-      email: userEmail // Include userEmail if required by the backend
+      email: userEmail
     };
 
     console.log('Prediction request payload:', payload);

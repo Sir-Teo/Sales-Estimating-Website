@@ -50,9 +50,24 @@ class ClosestRowSerializer(serializers.Serializer):
         for i in range(2, 13):
             self.fields[f'HO{i:02d}'] = serializers.FloatField(required=False)
 
+class CostPredictionSerializer(serializers.Serializer):
+    HO02 = serializers.FloatField()
+    HO03 = serializers.FloatField()
+    HO04 = serializers.FloatField()
+    HO05 = serializers.FloatField()
+    HO06 = serializers.FloatField()
+    HO07 = serializers.FloatField()
+    HO08 = serializers.FloatField()
+    HO09 = serializers.FloatField()
+    HO10 = serializers.FloatField()
+    HO11 = serializers.FloatField()
+    HO12 = serializers.FloatField()
+
 class OutputSerializer(serializers.Serializer):
     rf_predictions = PredictionSerializer()
     xgb_predictions = PredictionSerializer()
+    rf_cost_predictions = CostPredictionSerializer()
+    xgb_cost_predictions = CostPredictionSerializer()
     closest_rows = ClosestRowSerializer(many=True)
 
 class SavedPredictionSerializer(serializers.ModelSerializer):
@@ -61,7 +76,7 @@ class SavedPredictionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SavedPrediction
-        fields = ['id', 'email', 'project_name', 'filtered_input_data', 'rf_predictions', 'xgb_predictions', 'closest_rows', 'created_at']
+        fields = ['id', 'email', 'project_name', 'filtered_input_data', 'rf_predictions', 'xgb_predictions', 'rf_cost_predictions', 'xgb_cost_predictions', 'closest_rows', 'created_at']
         read_only_fields = ['id', 'email', 'created_at']
 
     def get_filtered_input_data(self, obj):

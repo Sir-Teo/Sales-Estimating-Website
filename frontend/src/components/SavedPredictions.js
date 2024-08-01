@@ -39,6 +39,9 @@ const SavedPredictions = ({ predictions, onPredictionClick, onDeletePrediction }
                   <Typography variant="body2" color="text.secondary">
                     Email: {prediction.email}
                   </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Cost Models: {prediction.rf_cost_predictions && prediction.xgb_cost_predictions ? 'Included' : 'Not included'}
+                  </Typography>
                 </Box>
               }
             />

@@ -220,3 +220,13 @@ export const descriptions = {'AN01': 'Repair',
   'OM02': 'Repair',
   'OM03': 'Advance replacement',
   'UA01': 'Unallocated costs'};
+
+
+  export const prepareCostChartData = (rf_cost_predictions, xgb_cost_predictions, descriptions) => {
+    return Object.keys(rf_cost_predictions).map(key => ({
+      name: key,
+      RF: parseFloat(rf_cost_predictions[key].toFixed(2)),
+      XGB: parseFloat(xgb_cost_predictions[key].toFixed(2)),
+      description: descriptions[key] || ''
+    }));
+  };

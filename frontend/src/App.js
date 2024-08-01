@@ -32,7 +32,6 @@ function App() {
   const [currentPage, setCurrentPage] = useState('main');
   const [registrationMessage, setRegistrationMessage] = useState(null);
   const [registrationError, setRegistrationError] = useState(null);
-  const [forceLoginMode, setForceLoginMode] = useState(false);
 
   const handleNavigate = (page) => {
     setCurrentPage(page);
@@ -43,7 +42,6 @@ function App() {
       const result = await register(userData);
       if (result.success) {
         setRegistrationMessage(result.message);
-        setForceLoginMode(true);
       }
     } catch (err) {
       setRegistrationError(err.message);
@@ -85,7 +83,6 @@ function App() {
               results={results}
               inputs={inputs}
               userEmail={user}
-              forceLoginMode={forceLoginMode}
             />
           )}
           {currentPage === 'about' && <AboutPage />}

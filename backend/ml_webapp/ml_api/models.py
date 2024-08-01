@@ -9,6 +9,9 @@ class SavedPrediction(models.Model):
     input_data = models.JSONField()
     rf_predictions = models.JSONField()
     xgb_predictions = models.JSONField()
+    # defaul to empty dict
+    rf_cost_predictions = models.JSONField(default=dict)
+    xgb_cost_predictions = models.JSONField(default=dict)
     closest_rows = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
 

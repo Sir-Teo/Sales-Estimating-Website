@@ -17,12 +17,12 @@ function MainContent({
   isLoading,
   results,
   inputs,
-  userEmail  // Add userEmail to the props
+  userEmail
 }) {
   return (
     <Container component="main" maxWidth="lg" sx={{ mt: 4, mb: 4, flexGrow: 1 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Sales Prediction Tool
+        Sales and Cost Prediction Tool
       </Typography>
       {!isLoggedIn ? (
         <LoginForm onLogin={onLogin} onRegister={onRegister} />
@@ -36,7 +36,7 @@ function MainContent({
             />
           ) : (
             <>
-              <PredictionForm onSubmit={onSubmit} userEmail={userEmail} />  {/* Pass userEmail here */}
+              <PredictionForm onSubmit={onSubmit} userEmail={userEmail} />
               {isLoading && (
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                   <CircularProgress role="progressbar" />

@@ -16,20 +16,11 @@ logger = logging.getLogger(__name__)
 class PredictionView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(
-        request_body=InputSerializer,
-        responses={
-            200: OutputSerializer,
-            400: 'Bad Request',
-            500: 'Internal Server Error'
-        }
-    )
     def post(self, request, format=None):
         input_serializer = InputSerializer(data=request.data)
         if input_serializer.is_valid():
             try:
                 validated_data = input_serializer.validated_data
-                print(validated_data)
                 project_name = validated_data.pop('project_name')
                 email = validated_data.pop('email')
                 inputs = validated_data.pop('inputs')
@@ -37,43 +28,45 @@ class PredictionView(APIView):
                 
                 rf_predictions = prediction_results['Random Forest']
                 xgb_predictions = prediction_results['XGBoost']
+                rf_cost_predictions = prediction_results['Random Forest Cost']
+                xgb_cost_predictions = prediction_results['XGBoost Cost']
                 closest_rows = prediction_results['k-NN']
 
                 prediction = {
                     'rf_predictions': rf_predictions,
                     'xgb_predictions': xgb_predictions,
+                    'rf_cost_predictions': rf_cost_predictions,
+                    'xgb_cost_predictions': xgb_cost_predictions,
                     'closest_rows': closest_rows.to_dict(orient='records')
                 }
 
-                # Save the prediction 
                 saved_prediction = SavedPrediction.objects.create(
                     user=request.user,
                     project_name=project_name,
                     input_data=inputs,
                     rf_predictions=rf_predictions,
                     xgb_predictions=xgb_predictions,
+                    rf_cost_predictions=rf_cost_predictions,
+                    xgb_cost_predictions=xgb_cost_predictions,
                     closest_rows=closest_rows.to_dict(orient='records')
                 )
 
                 output_serializer = OutputSerializer(data=prediction)
                 if output_serializer.is_valid():
-                    logger.info(f"Prediction successful: {output_serializer.data}")
                     return Response(output_serializer.data, status=status.HTTP_200_OK)
                 else:
-                    logger.error(f"Output serialization failed: {output_serializer.errors}")
                     return Response({'error': 'Internal server error', 'details': output_serializer.errors}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             except Exception as e:
-                logger.exception(f"Prediction failed: {str(e)}")
                 return Response({'error': 'Prediction failed', 'details': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
-            logger.error(f"Input validation failed: {input_serializer.errors}")
             return Response({'error': 'Bad request', 'details': input_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-        
+
     
 class SavedPredictionsPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 100
+
 
 class SavedPredictionsView(APIView):
     permission_classes = [IsAuthenticated]
