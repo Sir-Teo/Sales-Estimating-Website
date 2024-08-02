@@ -61,7 +61,7 @@ function Header({ isLoggedIn, user, onLogout, showSavedPredictions, setShowSaved
         >
           <MenuItem onClick={() => handleMenuItemClick('about')}>About</MenuItem>
           <MenuItem onClick={() => handleMenuItemClick('help')}>Help</MenuItem>
-          <MenuItem onClick={() => handleMenuItemClick('report')}>Markdown Report</MenuItem>
+          <MenuItem onClick={() => handleMenuItemClick('report')}>Report</MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>
