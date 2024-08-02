@@ -54,6 +54,8 @@ export function usePredictions(isLoggedIn) {
     setResults({
       rf_predictions: prediction.rf_predictions,
       xgb_predictions: prediction.xgb_predictions,
+      rf_cost_predictions: prediction.rf_cost_predictions,
+      xgb_cost_predictions: prediction.xgb_cost_predictions,
       closest_rows: prediction.closest_rows,
     });
     setShowSavedPredictions(false);

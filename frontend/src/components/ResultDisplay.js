@@ -14,7 +14,11 @@ const ResultDisplay = ({ results = {}, inputs = {} }) => {
 
   const { rf_predictions, xgb_predictions, rf_cost_predictions, xgb_cost_predictions, closest_rows } = results;
   const chartData = prepareChartData(rf_predictions, xgb_predictions, descriptions);
-  const costChartData = prepareCostChartData(rf_cost_predictions, xgb_cost_predictions, descriptions);
+  
+  // Only prepare cost chart data if cost predictions are available
+  const costChartData = rf_cost_predictions && xgb_cost_predictions 
+    ? prepareCostChartData(rf_cost_predictions, xgb_cost_predictions, descriptions)
+    : null;
 
   return (
     <Paper sx={{ padding: 3, mt: 3, mb: 3 }}>
@@ -32,16 +36,20 @@ const ResultDisplay = ({ results = {}, inputs = {} }) => {
         </Grid>
 
         <Grid item xs={12}>
-          <CostPredictionChart chartData={costChartData} />
-        </Grid>
-
-        <Grid item xs={12}>
           <DetailedResultsTable chartData={chartData} descriptions={descriptions} />
         </Grid>
 
-        <Grid item xs={12}>
-          <DetailedCostResultsTable chartData={costChartData} descriptions={descriptions} />
-        </Grid>
+        {costChartData && (
+          <>
+            <Grid item xs={12}>
+              <CostPredictionChart chartData={costChartData} />
+            </Grid>
+
+            <Grid item xs={12}>
+              <DetailedCostResultsTable chartData={costChartData} descriptions={descriptions} />
+            </Grid>
+          </>
+        )}
 
         <Grid item xs={12}>
           <ClosestRows closest_rows={closest_rows} descriptions={descriptions} />

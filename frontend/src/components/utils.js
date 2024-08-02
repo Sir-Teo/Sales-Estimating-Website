@@ -1,5 +1,9 @@
 // utils.js
 export const prepareChartData = (rf_predictions, xgb_predictions, descriptions) => {
+  if (!rf_predictions || !xgb_predictions) {
+    console.error('Missing predictions data');
+    return [];
+  }
   return Object.keys(rf_predictions).map(key => ({
     name: key,
     RF: parseFloat(rf_predictions[key].toFixed(2)),
@@ -8,6 +12,18 @@ export const prepareChartData = (rf_predictions, xgb_predictions, descriptions) 
   }));
 };
 
+export const prepareCostChartData = (rf_cost_predictions, xgb_cost_predictions, descriptions) => {
+  if (!rf_cost_predictions || !xgb_cost_predictions) {
+    console.error('Missing cost predictions data');
+    return [];
+  }
+  return Object.keys(rf_cost_predictions).map(key => ({
+    name: key,
+    RF: parseFloat(rf_cost_predictions[key].toFixed(2)),
+    XGB: parseFloat(xgb_cost_predictions[key].toFixed(2)),
+    description: descriptions[key] || ''
+  }));
+};
 export const groupsManual = {
   'AN ANDOVER EQUIPMENT': ['AN01',
     'AN02',
@@ -220,13 +236,3 @@ export const descriptions = {'AN01': 'Repair',
   'OM02': 'Repair',
   'OM03': 'Advance replacement',
   'UA01': 'Unallocated costs'};
-
-
-  export const prepareCostChartData = (rf_cost_predictions, xgb_cost_predictions, descriptions) => {
-    return Object.keys(rf_cost_predictions).map(key => ({
-      name: key,
-      RF: parseFloat(rf_cost_predictions[key].toFixed(2)),
-      XGB: parseFloat(xgb_cost_predictions[key].toFixed(2)),
-      description: descriptions[key] || ''
-    }));
-  };
