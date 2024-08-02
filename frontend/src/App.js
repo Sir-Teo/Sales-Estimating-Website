@@ -1,4 +1,3 @@
-// App.js
 import React, { useState } from 'react';
 import { ThemeProvider, createTheme, CssBaseline, Box, Container, Snackbar, Alert } from '@mui/material';
 import Header from './components/Header';
@@ -7,6 +6,7 @@ import HelpPage from './components/HelpPage';
 import MainContent from './components/MainContent';
 import Footer from './components/Footer';
 import ErrorSnackbar from './components/ErrorSnackbar';
+import MarkdownReport from './components/MarkdownReport';
 import { useAuth } from './hooks/useAuth';
 import { usePredictions } from './hooks/usePredictions';
 
@@ -87,6 +87,7 @@ function App() {
           )}
           {currentPage === 'about' && <AboutPage />}
           {currentPage === 'help' && <HelpPage />}
+          {currentPage === 'report' && <MarkdownReport />}
         </Container>
         <Footer />
       </Box>
