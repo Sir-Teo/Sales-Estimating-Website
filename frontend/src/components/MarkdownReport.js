@@ -316,7 +316,7 @@ function MarkdownReport() {
     <Container maxWidth="md">
       <Paper elevation={3} sx={{ mt: 4, p: 4, backgroundColor: '#f5f5f5', borderRadius: '15px' }}>
         <Typography variant="h4" gutterBottom align="center" color="primary">
-          Markdown Report
+          Models Report
         </Typography>
         <ReactMarkdown
           children={markdownContent}
@@ -345,7 +345,7 @@ function MarkdownReport() {
                   border: '1px solid #ddd',
                   padding: '8px',
                 }}
-                {...props}
+                {...props}s
               />
             ),
           }}
